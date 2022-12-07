@@ -40,7 +40,7 @@ namespace :figaro_yml do
       if !result1.empty? || !result2.empty?
         loop do
           print 'Update remote application.yml? (y/N): '
-          input = $stdin.gets.chomp.downcase
+          input = $stdin.gets.strip.downcase
 
           answer = (input.empty? ? 'N' : input).downcase.to_s
           break if %w[y n].include?(answer)
