@@ -39,17 +39,18 @@ namespace :figaro_yml do
       result2 = compare_hashes(local_stage_env, remote_stage_env)
       if !result1.empty? || !result2.empty?
         loop do
-          print 'Update remote application.yml? (y/N): '
+          print 'Update remote application.yml? (y/N): '  
           input = $stdin.gets.strip.downcase
-
           answer = (input.empty? ? 'N' : input).downcase.to_s
-          break if %w[y n].include?(answer)
-        end
 
-        if input == 'y'
-          puts 'Updating remote application.yml'
-          invoke 'figaro_yml:setup'
-          exit
+          next unless %w(y n).include?(answer)
+        
+          if answer == 'y'
+            puts 'Updating remote application.yml'
+            invoke 'figaro_yml:setup'
+            exit
+          end
+          break
         end
         puts 'remote application.yml not updated'
         exit
@@ -57,7 +58,6 @@ namespace :figaro_yml do
       puts 'remote application.yml is up to date'
     end
   end
-  # rubocop:disable Metrics/MethodLength
   def compare_hashes(hash1, hash2)
     changes = false
     (hash1.to_a - hash2.to_a).to_h.each_key do |k|
@@ -71,6 +71,5 @@ namespace :figaro_yml do
       end
     end
   end
-  # rubocop:enable Metrics/MethodLength
 end
 # rubocop:enable Metrics/BlockLength
