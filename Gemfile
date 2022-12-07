@@ -2,5 +2,5 @@
 
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in zwtdevops.gemspec
+# Specify your gem's dependencies in zauberware-devops.gemspec
 gemspec
