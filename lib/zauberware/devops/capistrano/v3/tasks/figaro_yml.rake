@@ -59,17 +59,20 @@ namespace :figaro_yml do
     end
   end
   def compare_hashes(hash1, hash2)
-    changes = false
-    (hash1.to_a - hash2.to_a).to_h.each_key do |k|
-      new_value = hash1[k].to_s
-      new_value = new_value.empty? ? 'nil' : new_value
-      old_value = hash2[k].to_s
-      old_value = old_value.empty? ? 'nil' : old_value
-      if new_value != old_value
-        puts "#{k}: #{old_value} => #{new_value} \r\n"
-        changes = true
-      end
+        changes = false
+        local_server = hash1.to_a - hash2.to_a
+        server_local = hash2.to_a - hash1.to_a
+        
+        [local_server + server_local].flatten(1).to_h.keys.each do |k|
+            new_value = hash1[k].to_s
+            new_value = new_value.empty? ? "nil" : new_value
+            old_value = hash2[k].to_s
+            old_value = old_value.empty? ? "nil" : old_value
+            if old_value != new_value
+                puts "#{k}: #{old_value} => #{new_value} \r\n"
+                changes = true
+            end
+        end
     end
-  end
 end
 # rubocop:enable Metrics/BlockLength
