@@ -9,7 +9,7 @@ namespace :backup do
     on roles(rake_roles) do
       env = "RAILS_ENV=#{fetch(:stage)}"
       # rubocop:disable Layout/LineLength
-      path_cmd = "PATH=$HOME/.rbenv/versions/$(grep \"ruby '\" Gemfile | sed -e \"s/ruby\s'//g; s/'.\\{0,\\}//g\")/bin:$PATH"
+      path_cmd = "PATH=$HOME/.rbenv/versions/#{RUBY_VERSION}/bin:$PATH"
       # rubocop:enable Layout/LineLength
       execute "cd #{release_path} && #{path_cmd} && #{env} BACKUPS_ENABLED=true bundle exec rake pg:dump"
     end
