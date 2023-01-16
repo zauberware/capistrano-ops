@@ -41,16 +41,17 @@ require 'zauberware/devops'
 
 ## Script overview
 
-| Script                                    | Description                                                       |
-| ----------------------------------------- | ----------------------------------------------------------------- |
-| `cap <environment> backup:create`         | creates backup of postgres database on the server                 |
-| `cap <environment> backup:pull`           | download latest postgres backup from server                       |
-| `cap <environment> figaro_yml:compare`    | compare local application.yml with server application.yml         |
-| `cap <environment> figaro_yml:get`        | shows env vars from server application.yml configured thru figaro |
-| `cap <environment> logs:rails`            | display server log live                                           |
-| `cap <environment> whenever:show_crontab` | display server app crontab generated with whenever                |
-| `rake pg:dump`                            | creates postgres database backup                                  |
-| `rake pg:remove_old_dumps`                | remove old postgres backups                                       |
+| Script                                           | Description                                                       |
+| ------------------------------------------------ | ----------------------------------------------------------------- |
+| `cap <environment> backup:create`                | creates backup of postgres database on the server                 |
+| `cap <environment> backup:pull`                  | download latest postgres backup from server                       |
+| `cap <environment> figaro_yml:compare`           | compare local application.yml with server application.yml         |
+| `cap <environment> figaro_yml:get`               | shows env vars from server application.yml configured thru figaro |
+| `cap <environment> logs:rails`                   | display server log live                                           |
+| `cap <environment> whenever:show_crontab`        | display server app crontab generated with whenever                |
+| `cap <environment> invoke:rake TASK=<your:task>` | invoke rake task on server                                        |
+| `rake pg:dump`                                   | creates postgres database backup                                  |
+| `rake pg:remove_old_dumps`                       | remove old postgres backups                                       |
 
 ## Usage
 

@@ -7,6 +7,7 @@ if defined?(Capistrano::VERSION) && Gem::Version.new(Capistrano::VERSION).releas
   load File.expand_path('capistrano/v3/tasks/backup.rake', __dir__)
   load File.expand_path('capistrano/v3/tasks/figaro_yml.rake', __dir__)
   load File.expand_path('capistrano/v3/tasks/logs.rake', __dir__)
+  load File.expand_path('capistrano/v3/tasks/invoke.rake', __dir__)
 else
   puts 'Capistrano 3 is required to use this gem'
 end
