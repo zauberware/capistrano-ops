@@ -59,7 +59,6 @@ for all backup task you have to setup your database.yml properly:
 
 ```
 production:
-
   database: database_name
   username: database_username
   password: database_password
