@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ['lib']
 
-  # s.add_development_dependency 'bundler', '~> 1.11'
+  s.add_development_dependency 'bundler', '~> 2.3.9'
   s.add_development_dependency 'rake', '~> 10.0'
   s.add_development_dependency 'git-version-bump', '~> 0.18'
 end
