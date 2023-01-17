@@ -4,9 +4,10 @@ $LOAD_PATH.push File.expand_path('lib', __dir__)
 
 require 'zauberware/devops/version'
 require 'git-version-bump'
+
 Gem::Specification.new do |s|
   s.name          = 'zauberware-devops'
-  s.version       = GVB.version
+  s.version       = GVB.version.strip.gsub(/(?<=[0-9]\.[0-9]\.[0-9])(\..+)/, '')
   s.platform      = Gem::Platform::RUBY
   s.authors       = ['Florian Crusius']
   s.email         = ['florian@zauberware.com']
