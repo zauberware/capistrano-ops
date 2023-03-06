@@ -5,13 +5,65 @@ namespace :figaro_yml do
   # Defaults to :app role
   rake_roles = fetch(:rake_roles, :app)
 
-  desc 'get the figaro_yml file from the server'
+  desc 'get the `application.yml` file from server and create local if it does not exist'
   task :get do
-    on roles(rake_roles) do
-    
-      puts capture "cat #{shared_path}/config/application.yml"
+      env = fetch(:stage)
+      if !File.exist?('config/application.yml')
+        puts "config/application.yml does not exist, creating it from all stages"
+        run_locally do
+          yamls={}
+          stages = Dir.glob('config/deploy/*.rb')
+          puts "found #{stages.count} stages"
+          stages.map do |f|
+            stage =File.basename(f, '.rb')
+            puts "download #{stage} application.yml"
+            begin 
+            res = capture "cap #{stage} figaro_yml:get_stage"
+            yamls= yamls.merge(YAML.safe_load(res))
+            rescue
+              puts "could not get #{stage} application.yml"
+            end
+            yamls
+          end
+          # write to new file
+          puts "writing to config/application.yml"
+          write_to_file('config/application.yml', yamls.to_yaml)
+        end
+      else
+        local_yml = YAML.safe_load(File.read('config/application.yml'))
+        on roles(rake_roles) do
+          remote = capture("cat #{shared_path}/config/application.yml")
+          remote_yml = YAML.safe_load(remote)
+          remote_stage = remote_yml[env.to_s]
+          puts "remote application.yml stage '#{env.to_s}':\n\n"
+          puts remote + "\r\n"
+          puts "\r\n"
+          loop do
+            print "Overwrite local application.yml stage '#{env.to_s}'? (y/N): "
+            input = $stdin.gets.strip.downcase
+            answer = (input.empty? ? 'N' : input).downcase.to_s
+
+            next unless %w(y n).include?(answer)
+
+            if answer == 'y'
+              puts 'Updating local application.yml'
+              local_yml[env.to_s] = remote_stage
+              write_to_file('config/application.yml', local_yml.to_yaml)
+              exit
+            end
+            break
+          end
+          puts 'Nothing written to local application.yml'
+          exit
+        end
+      end
     end
-  end
+    
+    task :get_stage do
+      on roles(rake_roles) do
+        puts capture "cat #{shared_path}/config/application.yml"
+      end
+    end
 
   desc 'compare and set the figaro_yml file on the server'
   task :compare do
@@ -61,20 +113,28 @@ namespace :figaro_yml do
     end
   end
   def compare_hashes(hash1, hash2)
-        changes = false
-        local_server = hash1.to_a - hash2.to_a
-        server_local = hash2.to_a - hash1.to_a
-        
-        [local_server + server_local].flatten(1).to_h.keys.each do |k|
-            new_value = hash1[k].to_s
-            new_value = new_value.empty? ? "nil" : new_value
-            old_value = hash2[k].to_s
-            old_value = old_value.empty? ? "nil" : old_value
-            if old_value != new_value
-                puts "#{k}: #{old_value} => #{new_value} \r\n"
-                changes = true
-            end
-        end
+    changes = false
+    local_server = hash1.to_a - hash2.to_a
+    server_local = hash2.to_a - hash1.to_a
+    
+    [local_server + server_local].flatten(1).to_h.keys.each do |k|
+      new_value = hash1[k].to_s
+      new_value = new_value.empty? ? "nil" : new_value
+      old_value = hash2[k].to_s
+      old_value = old_value.empty? ? "nil" : old_value
+
+      if old_value != new_value
+          puts "#{k}: #{old_value} => #{new_value} \r\n"
+          changes = true
+      end
     end
+  end 
+
+  def write_to_file(file, content)
+    File.open(file, 'w') do |f|
+      f.write(content)
+    end
+  end
+
 end
 # rubocop:enable Metrics/BlockLength
