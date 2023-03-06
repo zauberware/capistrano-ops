@@ -1,4 +1,4 @@
-# zauberware-devops
+# capistrano-ops
 
 Library of useful scripts for DevOps using capistrano with rails.
 
@@ -21,7 +21,7 @@ group :development do
   gem 'capistrano', require: false
 end
 
-gem 'zauberware-devops'
+gem 'capistrano-ops'
 ```
 
 Then `bundle` and add it to your `Capfile`
@@ -29,14 +29,14 @@ Then `bundle` and add it to your `Capfile`
 ```ruby
 # Capfile
 
-require 'zauberware/devops/capistrano'
+require 'capistrano/ops'
 ```
 
 and `initializers`
 
 ```ruby
-# initializers/zauberware_devops.rb
-require 'zauberware/devops'
+# initializers/capistrano-ops.rb
+require 'capistrano/ops'
 ```
 
 ## Script overview
@@ -69,13 +69,16 @@ production:
 
 ### Optional Settings for backup task
 
-| env               | description                         |
-| ----------------- | ----------------------------------- |
-| NUMBER_OF_BACKUPS | number of backups to keep           |
-| BACKUPS_ENABLED   | enable/disable backup task          |
-| DEFAULT_URL       | for slack integration message title |
-| SLACK_SECRET      | for slack integration               |
-| SLACK_CHANNEL     | for slack integration               |
+| env               | description                                                            |                            type/options                            |
+| ----------------- | ---------------------------------------------------------------------- | :----------------------------------------------------------------: |
+| NUMBER_OF_BACKUPS | number of backups to keep (default: 1)                                 |                              `number`                              |
+| BACKUPS_ENABLED   | enable/disable backup task (default: Rails.env == 'production')        |                             `boolean`                              |
+| DEFAULT_URL       | notification message title (default: "#{database} Backup")             |                              `string`                              |
+| NOTIFICATION_TYPE | for notification (default: nil)                                        |                    `string` (`webhook`/`slack`)                    |
+| SLACK_SECRET      | for slack integration                                                  | `string` (e.g. `xoxb-1234567890-1234567890-1234567890-1234567890`) |
+| SLACK_CHANNEL     | for slack integration                                                  |                    `string` (e.g. `C234567890`)                    |
+| WEBHOOK_URL       | Webhook server to send message                                         |                      e.g `http://example.com`                      |
+| WEBHOOK_SECRET    | Secret to send with uses md5-hmac hexdigest in header`x-hub-signature` |                                ---                                 |
 
 ### use with whenever/capistrano
 
@@ -112,9 +115,29 @@ You can optionally specify the capistrano roles for the rake task (Defaults to `
 set :rake_roles, %i[db app]
 ```
 
+## Slack integration
+
+if you want to use slack integration you have to add this to your `application.yml`
+
+```ruby
+NOTIFICATION_TYPE: 'slack'
+SLACK_SECRET: '<your-slack-secret>'
+SLACK_CHANNEL: '<your-slack-channel>'
+```
+
+## Webhook integration
+
+if you want to use webhook integration you have to add this to your `application.yml`
+
+```ruby
+NOTIFICATION_TYPE: 'webhook'
+WEBHOOK_URL: '<your-webhook-url>'
+WEBHOOK_SECRET: '<your-webhook-secret>'
+```
+
 ## Contributing
 
-1. Fork it ( https://github.com/zauberware/zauberware-devops/fork )
+1. Fork it ( https://github.com/zauberware/capistrano-ops/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
@@ -123,3 +146,7 @@ set :rake_roles, %i[db app]
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+
+```
+
+```

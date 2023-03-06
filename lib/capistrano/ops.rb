@@ -1,7 +1,10 @@
-module Zauberware
-    module DevOps
-        require 'zauberware/devops/railtie' if defined?(Rails)
 
+
+module Capistrano
+    module Ops
+        require 'capistrano/ops/notification'
+        require 'capistrano/ops/railtie' if defined?(Rails)
+        require 'capistrano/ops/capistrano' if defined?(Capistrano::VERSION)
         def self.path
             Dir.pwd
         end

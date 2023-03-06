@@ -10,8 +10,9 @@ namespace :pg do
   portnumber = Rails.configuration.database_configuration[Rails.env]['port']
   backup_path = Rails.root.join(default_backup_path).to_s
   backups_enabled = Rails.env.production? || ENV['BACKUPS_ENABLED'] == 'true'
-
+  
   task :dump do
+    api = Notification::Api.new
     date = Time.now.to_i
     user = username.present? ? " -U #{username}" : ''
     host = hostname.present? ? " -h #{hostname}" : ''
@@ -22,47 +23,17 @@ namespace :pg do
     if backups_enabled
       system "mkdir -p #{backup_path}" unless Dir.exist?(backup_path)
       result = system(dump_cmd)
-      slack_notification(result, date, database, backup_path)
+      api.send_backup_notification(result, date, database, backup_path)
+      # Notification::Slack.new.backup_notification(result, date, database, backup_path)
     end
     if backups_enabled
       # rubocop:disable Layout/LineLength
       p result ? "Backup created: #{backup_path}/#{database}_#{date}.dump" : "Backup failed, created empty file at #{backup_path}/#{database}_#{date}.dump"
+      system "rm #{backup_path}/#{database}_#{date}.dump" unless result
     # rubocop:enable Layout/LineLength
     else
       p 'dump: Backups are disabled'
     end
   end
-  # rubocop:disable Metrics/MethodLength
-  def slack_notification(result, date, database, backup_path)
-    return unless ENV['SLACK_SECRET'].present? && ENV['SLACK_CHANNEL'].present?
-
-    message_one = "Backup of #{database} successfully finished at #{Time.now}"
-    message_two = "Backup path:\`#{backup_path}/#{database}_#{date}.dump\`"
-    data = {
-      channel: ENV['SLACK_CHANNEL'],
-      blocks: [
-        {
-          type: 'header',
-          text: {
-            type: 'plain_text',
-            text: ENV['DEFAULT_URL'] || "#{database} Backup",
-            emoji: true
-          }
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: result ? "#{message_one}\n#{message_two}" : "Backup of #{database} failed at #{Time.now}"
-          }
-        }
-      ]
-    }
-    # rubocop:disable Layout/LineLength
-    curl = "curl -X POST https://slack.com/api/chat.postMessage -H 'Content-type: application/json; charset=utf-8' --data '#{data.to_json}' -H 'Authorization: Bearer #{ENV['SLACK_SECRET']}'"
-    # rubocop:enable Layout/LineLength
-    system curl
-  end
-  # rubocop:enable Metrics/MethodLength
 end
 # rubocop:enable Metrics/BlockLength
