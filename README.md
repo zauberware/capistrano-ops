@@ -35,7 +35,7 @@ require 'capistrano/ops'
 and `initializers`
 
 ```ruby
-# initializers/capistrano-ops.rb
+# initializers/capistrano_ops.rb
 require 'capistrano/ops'
 ```
 
