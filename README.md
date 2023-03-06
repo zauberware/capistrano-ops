@@ -1,4 +1,4 @@
-# zauberware-devops
+# capistrano-ops
 
 Library of useful scripts for DevOps using capistrano with rails.
 
@@ -21,7 +21,7 @@ group :development do
   gem 'capistrano', require: false
 end
 
-gem 'zauberware-devops'
+gem 'capistrano-ops'
 ```
 
 Then `bundle` and add it to your `Capfile`
@@ -29,14 +29,14 @@ Then `bundle` and add it to your `Capfile`
 ```ruby
 # Capfile
 
-require 'zauberware/devops/capistrano'
+require 'capistrano/ops'
 ```
 
 and `initializers`
 
 ```ruby
-# initializers/zauberware_devops.rb
-require 'zauberware/devops'
+# initializers/capistrano-ops.rb
+require 'capistrano/ops'
 ```
 
 ## Script overview
@@ -114,7 +114,7 @@ set :rake_roles, %i[db app]
 
 ## Contributing
 
-1. Fork it ( https://github.com/zauberware/zauberware-devops/fork )
+1. Fork it ( https://github.com/zauberware/capistrano-ops/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)

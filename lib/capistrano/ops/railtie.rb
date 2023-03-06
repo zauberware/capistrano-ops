@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'zauberware/devops'
+require 'capistrano/ops'
 require 'rails'
-module Zauberware
-  module DevOps
+module Capistrano
+  module Ops
     class Railtie < Rails::Railtie
-      railtie_name :devops
+      railtie_name :ops
       rake_tasks do
         path = File.expand_path(__dir__)
         Dir.glob("#{path}/tasks/**/*.rake").each { |f| load f }

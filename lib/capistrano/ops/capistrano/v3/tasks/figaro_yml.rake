@@ -8,10 +8,12 @@ namespace :figaro_yml do
   desc 'get the figaro_yml file from the server'
   task :get do
     on roles(rake_roles) do
+    
       puts capture "cat #{shared_path}/config/application.yml"
     end
   end
 
+  desc 'compare and set the figaro_yml file on the server'
   task :compare do
     env = fetch(:stage)
     # read local application.yml
