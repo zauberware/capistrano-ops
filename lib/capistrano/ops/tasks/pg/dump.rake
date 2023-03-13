@@ -18,7 +18,7 @@ namespace :pg do
     host = hostname.present? ? " -h #{hostname}" : ''
     port = portnumber.present? ? " -p #{portnumber}" : ''
     # rubocop:disable Layout/LineLength
-    dump_cmd = "export PGPASSWORD='#{password}' && cd #{backup_path} && pg_dump -d #{database}#{user}#{host}#{port} > #{database}_#{date}.dump"
+    dump_cmd = "export PGPASSWORD='#{password}' && cd #{backup_path} && pg_dump -Fc -d #{database}#{user}#{host}#{port} > #{database}_#{date}.dump"
     # rubocop:enable Layout/LineLength
     if backups_enabled
       system "mkdir -p #{backup_path}" unless Dir.exist?(backup_path)
