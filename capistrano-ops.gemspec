@@ -25,10 +25,14 @@ Gem::Specification.new do |s|
     s.add_dependency 'rails', '>= 4.2.0', '< 7.0.0'
   end
   # adjust nokogiiri version depending on ruby version
-  if RUBY_VERSION <= '2.6.6' && RUBY_VERSION >= '2.5.0'
+  if RUBY_VERSION < '2.5.0'
     s.add_dependency 'nokogiri', '>= 1.8.0', '< 1.11.0'
+  elsif RUBY_VERSION < '2.6.0' 
+    s.add_dependency 'nokogiri', '>= 1.8.0', '< 1.13.0'
+  elsif RUBY_VERSION < '2.7.0' 
+    s.add_dependency 'nokogiri', '>= 1.8.0', '< 1.14.0'
   else
-    s.add_dependency 'nokogiri', '>= 1.10.0', '< 1.12.0'
+    s.add_dependency 'nokogiri', '>= 1.11.0'
   end
 
   s.add_development_dependency 'bundler', '~> 2.3.9'
