@@ -27,8 +27,8 @@ Gem::Specification.new do |s|
   # adjust nokogiri version depending on ruby version
   if RUBY_VERSION < '2.5.0'
     s.add_dependency 'nokogiri', '>= 1.8.0', '< 1.11.0'
-  elsif RUBY_VERSION < '2.6.0' 
-    s.add_dependency 'nokogiri', '>= 1.8.0', '< 1.13.0'
+  elsif RUBY_VERSION < '2.6.7' 
+    s.add_dependency 'nokogiri', '>= 1.8.0', '<= 1.13.10'
   elsif RUBY_VERSION < '2.7.0' 
     s.add_dependency 'nokogiri', '>= 1.8.0', '< 1.14.0'
   else
