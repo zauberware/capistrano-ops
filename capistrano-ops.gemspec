@@ -21,8 +21,10 @@ Gem::Specification.new do |s|
   # add rails depending on ruby version
   if RUBY_VERSION <= '2.6.6' && RUBY_VERSION >= '2.5.0'
     s.add_dependency 'rails', '>= 4.2.0', '< 6.0.0'
-  else
+  elsif RUBY_VERSION <= '2.7.0'
     s.add_dependency 'rails', '>= 4.2.0', '< 7.0.0'
+  else
+    s.add_dependency 'rails', '>= 4.2.0'
   end
   # adjust nokogiri version depending on ruby version
   if RUBY_VERSION < '2.5.0'
