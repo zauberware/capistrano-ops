@@ -37,6 +37,6 @@ Gem::Specification.new do |s|
     s.add_dependency 'nokogiri', '>= 1.11.0'
   end
 
-  s.add_development_dependency 'bundler', '~> 2.3.9'
+  s.add_development_dependency 'bundler', '~> 2.4.15'
   s.add_development_dependency 'rake', '~> 10.0'
 end

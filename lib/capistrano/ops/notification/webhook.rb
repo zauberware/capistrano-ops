@@ -15,9 +15,9 @@ module Notification
             "md5=#{OpenSSL::HMAC.hexdigest('md5', ENV['WEBHOOK_SECRET'], payload_body)}"
         end
 
-        def backup_notification(result, date, database, backup_path)
+        def backup_notification(result, date, database, backup_path, notification_level)
             return if @webhook_url.nil? || @secret.nil?
-            
+            return if result && ENV['NOTIFICATION_LEVEL'] == 'error'
             data = {
                 domain: ENV['DEFAULT_URL'] || "#{database} Backup",
                 backupPath: result ? backup_path : nil,
