@@ -18,25 +18,12 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- test/{functional,unit}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ['lib']
-  # add rails depending on ruby version
-  if RUBY_VERSION <= '2.6.6' && RUBY_VERSION >= '2.5.0'
-    s.add_dependency 'rails', '>= 4.2.0', '< 6.0.0'
-  elsif RUBY_VERSION <= '2.7.0'
-    s.add_dependency 'rails', '>= 4.2.0', '< 7.0.0'
-  else
-    s.add_dependency 'rails', '>= 4.2.0'
-  end
-  # adjust nokogiri version depending on ruby version
-  if RUBY_VERSION < '2.5.0'
-    s.add_dependency 'nokogiri', '>= 1.8.0', '< 1.11.0'
-  elsif RUBY_VERSION < '2.6.7' 
-    s.add_dependency 'nokogiri', '>= 1.8.0', '<= 1.13.10'
-  elsif RUBY_VERSION < '2.7.0' 
-    s.add_dependency 'nokogiri', '>= 1.8.0', '< 1.14.0'
-  else
-    s.add_dependency 'nokogiri', '>= 1.11.0'
-  end
-
-  s.add_development_dependency 'bundler', '~> 2.4.15'
+  
+  s.required_ruby_version = '>= 2.5.0', '< 3.0.0'
+  
+  s.add_dependency 'rails'
+  s.add_dependency 'nokogiri'
+  
+  s.add_development_dependency 'bundler', '~> 2.4.12'
   s.add_development_dependency 'rake', '~> 10.0'
 end
