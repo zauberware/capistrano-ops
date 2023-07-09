@@ -23,8 +23,9 @@ module Notification
             puts response.body
         end
 
-        def backup_notification(result, date, database, backup_path)
+        def backup_notification(result, date, database, backup_path, notification_level)
             return if @slack_secret.nil? || @slack_channel.nil?
+            return if notification_level == 'error' && result
             uri = URI.parse("#{@slack_base_url}chat.postMessage")
             http = Net::HTTP.new(uri.host, uri.port)
             http.use_ssl = true

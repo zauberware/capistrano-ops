@@ -69,16 +69,17 @@ production:
 
 ### Optional Settings for backup task
 
-| env               | description                                                            |                            type/options                            |
-| ----------------- | ---------------------------------------------------------------------- | :----------------------------------------------------------------: |
-| NUMBER_OF_BACKUPS | number of backups to keep (default: 1)                                 |                              `number`                              |
-| BACKUPS_ENABLED   | enable/disable backup task (default: Rails.env == 'production')        |                             `boolean`                              |
-| DEFAULT_URL       | notification message title (default: "#{database} Backup")             |                              `string`                              |
-| NOTIFICATION_TYPE | for notification (default: nil)                                        |                    `string` (`webhook`/`slack`)                    |
-| SLACK_SECRET      | for slack integration                                                  | `string` (e.g. `xoxb-1234567890-1234567890-1234567890-1234567890`) |
-| SLACK_CHANNEL     | for slack integration                                                  |                    `string` (e.g. `C234567890`)                    |
-| WEBHOOK_URL       | Webhook server to send message                                         |                      e.g `http://example.com`                      |
-| WEBHOOK_SECRET    | Secret to send with uses md5-hmac hexdigest in header`x-hub-signature` |                                ---                                 |
+| env                | description                                                            |                            type/options                            |
+| ------------------ | ---------------------------------------------------------------------- | :----------------------------------------------------------------: |
+| NUMBER_OF_BACKUPS  | number of backups to keep (default: 1)                                 |                              `number`                              |
+| BACKUPS_ENABLED    | enable/disable backup task (default: Rails.env == 'production')        |                             `boolean`                              |
+| DEFAULT_URL        | notification message title (default: "#{database} Backup")             |                              `string`                              |
+| NOTIFICATION_TYPE  | for notification (default: nil)                                        |                    `string` (`webhook`/`slack`)                    |
+| NOTIFICATION_LEVEL | for notification (default: nil)                                        |                     `string` (`info`/`error`)                      |
+| SLACK_SECRET       | for slack integration                                                  | `string` (e.g. `xoxb-1234567890-1234567890-1234567890-1234567890`) |
+| SLACK_CHANNEL      | for slack integration                                                  |                    `string` (e.g. `C234567890`)                    |
+| WEBHOOK_URL        | Webhook server to send message                                         |                      e.g `http://example.com`                      |
+| WEBHOOK_SECRET     | Secret to send with uses md5-hmac hexdigest in header`x-hub-signature` |                                ---                                 |
 
 ### use with whenever/capistrano
 
@@ -133,6 +134,14 @@ if you want to use webhook integration you have to add this to your `application
 NOTIFICATION_TYPE: 'webhook'
 WEBHOOK_URL: '<your-webhook-url>'
 WEBHOOK_SECRET: '<your-webhook-secret>'
+```
+
+## Notification level
+
+if you want to use notification level you have to add this to your `application.yml`
+
+```ruby
+NOTIFICATION_LEVEL: 'info' # default is 'error'
 ```
 
 ## Contributing
