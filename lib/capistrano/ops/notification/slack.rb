@@ -23,15 +23,14 @@ module Notification
             puts response.body
         end
 
-        def backup_notification(result, date, database, backup_path, notification_level)
+        def backup_notification(result, title, content, notification_level)
             return if @slack_secret.nil? || @slack_channel.nil?
             return if notification_level == 'error' && result
             uri = URI.parse("#{@slack_base_url}chat.postMessage")
             http = Net::HTTP.new(uri.host, uri.port)
             http.use_ssl = true
             request = Net::HTTP::Post.new(uri.request_uri, initHeader = {'Content-Type' =>'application/json', 'Authorization' => 'Bearer ' + @slack_secret})
-            message_one = "Backup of #{database} successfully finished at #{Time.now}"
-            message_two = "Backup path:\`#{backup_path}/#{database}_#{date}.dump\`"
+            
             data = {
                 channel: @slack_channel,
                 blocks: [
@@ -39,7 +38,7 @@ module Notification
                         type: 'header',
                         text: {
                             type: 'plain_text',
-                            text: ENV['DEFAULT_URL'] || "#{database} Backup",
+                            text: title || "#{Rails.env} Message",
                             emoji: true
                         }
                     },
@@ -47,7 +46,7 @@ module Notification
                         type: 'section',
                         text: {
                             type: 'mrkdwn',
-                            text: result ? "#{message_one}\n#{message_two}" : "Backup of #{database} failed at #{Time.now}"
+                            text: content || 'No content'
                         }
                     }
                 ]

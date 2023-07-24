@@ -2,6 +2,7 @@
 
 module Capistrano
     module Ops
+        require 'capistrano/ops/backup'
         require 'capistrano/ops/notification'
         require 'capistrano/ops/railtie' if defined?(Rails)
         require 'capistrano/ops/capistrano' if defined?(Capistrano::VERSION)

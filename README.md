@@ -9,6 +9,9 @@ Library of useful scripts for DevOps using capistrano with rails.
 ```ruby
 'capistrano', '~> 3.0'
 'whenever'
+'capistrano-figaro-yml'
+
+# hint: if you use other aws-sdk gems, its possible that you have to update them too
 ```
 
 ## Installation
@@ -69,17 +72,23 @@ production:
 
 ### Optional Settings for backup task
 
-| env                | description                                                            |                            type/options                            |
-| ------------------ | ---------------------------------------------------------------------- | :----------------------------------------------------------------: |
-| NUMBER_OF_BACKUPS  | number of backups to keep (default: 1)                                 |                              `number`                              |
-| BACKUPS_ENABLED    | enable/disable backup task (default: Rails.env == 'production')        |                             `boolean`                              |
-| DEFAULT_URL        | notification message title (default: "#{database} Backup")             |                              `string`                              |
-| NOTIFICATION_TYPE  | for notification (default: nil)                                        |                    `string` (`webhook`/`slack`)                    |
-| NOTIFICATION_LEVEL | for notification (default: nil)                                        |                     `string` (`info`/`error`)                      |
-| SLACK_SECRET       | for slack integration                                                  | `string` (e.g. `xoxb-1234567890-1234567890-1234567890-1234567890`) |
-| SLACK_CHANNEL      | for slack integration                                                  |                    `string` (e.g. `C234567890`)                    |
-| WEBHOOK_URL        | Webhook server to send message                                         |                      e.g `http://example.com`                      |
-| WEBHOOK_SECRET     | Secret to send with uses md5-hmac hexdigest in header`x-hub-signature` |                                ---                                 |
+| env                | description                                                               |                            type/options                            |
+| ------------------ | ------------------------------------------------------------------------- | :----------------------------------------------------------------: |
+| NUMBER_OF_BACKUPS  | number of backups to keep (default: 1)                                    |                              `number`                              |
+| BACKUPS_ENABLED    | enable/disable backup task (default: Rails.env == 'production')           |                             `boolean`                              |
+| DEFAULT_URL        | notification message title (default: "#{database} Backup")                |                              `string`                              |
+| NOTIFICATION_TYPE  | for notification (default: nil)                                           |                    `string` (`webhook`/`slack`)                    |
+| NOTIFICATION_LEVEL | for notification (default: nil)                                           |                     `string` (`info`/`error`)                      |
+| SLACK_SECRET       | for slack integration                                                     | `string` (e.g. `xoxb-1234567890-1234567890-1234567890-1234567890`) |
+| SLACK_CHANNEL      | for slack integration                                                     |                    `string` (e.g. `C234567890`)                    |
+| WEBHOOK_URL        | Webhook server to send message                                            |                      e.g `http://example.com`                      |
+| WEBHOOK_SECRET     | Secret to send with uses md5-hmac hexdigest in header`x-hub-signature`    |                                ---                                 |
+| BACKUP_PROVIDER    | Backup provider (default: nil)                                            |                          `string` (`s3`)                           |
+| S3_BACKUP_BUCKET   | S3 bucket name for backups                                                |                              `string`                              |
+| S3_BACKUP_REGION   | S3 region for backups                                                     |                              `string`                              |
+| S3_BACKUP_KEY      | S3 access key for backups                                                 |                              `string`                              |
+| S3_BACKUP_SECRET   | S3 secret key for backups                                                 |                              `string`                              |
+| S3_BACKUP_ENDPOINT | S3 endpoint for backups (optional, used for other S3 compatible services) |                              `string`                              |
 
 ### use with whenever/capistrano
 
