@@ -9,18 +9,17 @@ namespace :pg do
   task :remove_old_dumps do
     bash_regex = "'#{@database}.{0,}\.dump'"
 
-    unless backups_enabled && @total_backups_no > 0
+    unless backups_enabled && @total_backups_no.positive?
       p 'remove_old_dumps: Backups are disabled'
       exit(0)
     end
 
-    
     commandlist = [
       "cd #{@backup_path} && ls -lt ",
       "grep -E -i #{bash_regex} ",
       "tail -n +#{@total_backups_no + 1} ",
       "awk '{print $9}' ",
-      "xargs rm -rf"
+      'xargs rm -rf'
     ]
 
     system(commandlist.join(' | '))

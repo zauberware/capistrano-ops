@@ -18,12 +18,12 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- test/{functional,unit}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ['lib']
-  
-  s.required_ruby_version = '>= 2.5.0', '< 3.0.0'
-  
-  s.add_dependency 'rails'
-  s.add_dependency 'nokogiri'
+
+  s.required_ruby_version = '~> 2.7.0'
+
   s.add_dependency 'aws-sdk-s3', '~> 1.128'
+  s.add_dependency 'nokogiri'
+  s.add_dependency 'rails'
   s.add_development_dependency 'bundler', '~> 2.4.12'
   s.add_development_dependency 'rake', '~> 10.0'
 end

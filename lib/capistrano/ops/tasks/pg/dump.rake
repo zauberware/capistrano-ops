@@ -2,7 +2,6 @@
 
 # rubocop:disable Metrics/BlockLength
 namespace :pg do
-  
   @database = Rails.configuration.database_configuration[Rails.env]['database']
   @username = Rails.configuration.database_configuration[Rails.env]['username']
   @password = Rails.configuration.database_configuration[Rails.env]['password']
@@ -19,25 +18,24 @@ namespace :pg do
 
     notification = Notification::Api.new
     commandlist = dump_cmd
-    
+
     system "mkdir -p #{@backup_path}" unless Dir.exist?(@backup_path)
-      
+
     result = system(commandlist.join(' && '))
-    
+
     if ENV['BACKUP_PROVIDER'].present? && result
       p "Uploading #{@filename} to #{ENV['BACKUP_PROVIDER']}..."
       provider = Backup::Api.new
       begin
-        provider.upload("#{@backup_path}/#{@filename}", "#{@filename}")
+        provider.upload("#{@backup_path}/#{@filename}", @filename.to_s)
         p "#{@filename} uploaded to #{ENV['BACKUP_PROVIDER']}"
       rescue StandardError => e
         p "#{@filename} upload failed: #{e.message}"
       end
     end
-    notification.send_backup_notification(result,title,content(result))
-    p result ? "Backup created: #{@backup_path}/#{@filename}" : "Backup failed removing dump file"
+    notification.send_backup_notification(result, title, content(result))
+    p result ? "Backup created: #{@backup_path}/#{@filename}" : 'Backup failed removing dump file'
     system "rm #{@backup_path}/#{@filename}" unless result
-    
   end
 
   def title
@@ -62,14 +60,13 @@ namespace :pg do
     options << " -U #{@username}" if @username.present?
     options << " -h #{@hostname}" if @hostname.present?
     options << " -p #{@portnumber}" if @portnumber.present?
-    
+
     @filename = "#{@database}_#{date}.dump"
-    
+
     commandlist = []
     commandlist << "export PGPASSWORD='#{@password}'"
     commandlist << "cd #{@backup_path}"
     commandlist << "pg_dump -Fc #{options.join('')} > #{@filename}"
   end
-
 end
 # rubocop:enable Metrics/BlockLength
