@@ -20,8 +20,8 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   s.required_ruby_version = '~> 2.7.0'
-
   s.add_dependency 'aws-sdk-s3', '~> 1.128'
+  s.add_dependency 'faraday'
   s.add_dependency 'nokogiri'
   s.add_dependency 'rails'
   s.add_development_dependency 'bundler', '~> 2.4.12'

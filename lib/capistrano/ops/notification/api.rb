@@ -9,14 +9,14 @@ module Notification
       self.notification_level = notification_level || 'error'
     end
 
-    def send_backup_notification(result, title, content)
+    def send_backup_notification(result, title, content, webhook_data = nil)
       return if notification_type.nil?
 
       case notification_type
       when 'slack'
         Slack.new.backup_notification(result, title, content, notification_level)
       when 'webhook'
-        Webhook.new.backup_notification(result, title, content, notification_level)
+        Webhook.new.backup_notification(result, webhook_data, notification_level)
       end
     end
 

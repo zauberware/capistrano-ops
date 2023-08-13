@@ -5,6 +5,7 @@ namespace :storage do
   @backup_path = Rails.root.join(Rails.env.development? ? 'tmp/backups' : '../../shared/backups').to_s
   @storage_path = Rails.root.join(Rails.env.development? ? 'storage' : '../../shared/storage').to_s
   backups_enabled = Rails.env.production? || ENV['BACKUPS_ENABLED'] == 'true'
+  external_backup = Rails.env.production? || ENV['EXTERNAL_BACKUP_ENABLED'] == 'true'
 
   desc 'backup storage'
   task :backup do
@@ -19,9 +20,9 @@ namespace :storage do
     FileUtils.mkdir_p(@backup_path) unless Dir.exist?(@backup_path)
     result = system "tar -zcf #{@backup_path}/#{@filename} -C #{@storage_path} ."
     FileUtils.rm_rf("#{@backup_path}/#{filename}") unless result
-    p result ? "Backup created: #{@backup_path}/#{@filename} (#{size_str(File.size("#{@backup_path}/#{@filename}"))})" : 'Backup failed removing dump file'
+    puts result ? "Backup created: #{@backup_path}/#{@filename} (#{size_str(File.size("#{@backup_path}/#{@filename}"))})" : 'Backup failed removing dump file'
 
-    if ENV['BACKUP_PROVIDER'].present? && result
+    if ENV['BACKUP_PROVIDER'].present? && external_backup && result
       puts "Uploading #{@filename} to #{ENV['BACKUP_PROVIDER']}..."
       provider = Backup::Api.new
       begin
@@ -31,7 +32,7 @@ namespace :storage do
         puts "#{@filename} upload failed: #{e.message}"
       end
     end
-    notification.send_backup_notification(result, title, message(result))
+    notification.send_backup_notification(result, title, message(result), { date: date, backup_path: @backup_path, database: 'storage' })
   end
 
   def title
