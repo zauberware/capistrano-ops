@@ -4,8 +4,8 @@ require 'rake'
 namespace :pg do
   @backup_path = Rails.root.join(Rails.env.development? ? 'tmp/backups' : '../../shared/backups').to_s
   @database = Rails.configuration.database_configuration[Rails.env]['database']
-  @env_local_no = ENV['NUMBER_OF_LOCAL_BACKUPS']
-  @env_external_no = ENV['NUMBER_OF_EXTERNAL_BACKUPS']
+  @env_local_no = ENV['NUMBER_OF_LOCAL_BACKUPS'].present? ? ENV['NUMBER_OF_LOCAL_BACKUPS'] : nil
+  @env_external_no = ENV['NUMBER_OF_EXTERNAL_BACKUPS'].present? ? ENV['NUMBER_OF_EXTERNAL_BACKUPS'] : nil
   @total_local_backups_no = (@env_local_no || ENV['NUMBER_OF_BACKUPS'] || 7).to_i
   @total_external_backups_no = (@env_external_no || ENV['NUMBER_OF_BACKUPS'] || 7).to_i
   backups_enabled = Rails.env.production? || ENV['BACKUPS_ENABLED'] == 'true'
@@ -19,7 +19,7 @@ namespace :pg do
       exit(0)
     end
     unless @total_local_backups_no.positive?
-      puts "remove_old_dumps: No local cleanup because option '#{if @env_local_no
+      puts "remove_old_dumps: No local cleanup because option '#{if @env_local_no.present?
                                                                    'NUMBER_OF_LOCAL_BACKUPS='
                                                                  else
                                                                    'NUMBER_OF_BACKUPS='
@@ -35,11 +35,12 @@ namespace :pg do
       'xargs rm -rf'
     ]
 
-    system(commandlist.join(' | '))
+    result = system(commandlist.join(' | ')) if @total_local_backups_no.positive?
+    puts 'remove_old_dumps: local cleanup finished' if result
 
     if ENV['BACKUP_PROVIDER'].present? && external_backup
       unless @total_external_backups_no.positive?
-        puts "remove_old_dumps: No external cleanup because option '#{if @env_external_no
+        puts "remove_old_dumps: No external cleanup because option '#{if @env_external_no.present?
                                                                         'NUMBER_OF_EXTERNAL_BACKUPS='
                                                                       else
                                                                         'NUMBER_OF_BACKUPS='
@@ -48,7 +49,7 @@ namespace :pg do
       end
       provider = Backup::Api.new
       begin
-        result = provider.remove_old_backups(@database, @total_external_backups_no)
+        result = provider.remove_old_backups("#{@database}_", @total_external_backups_no)
       rescue StandardError => e
         puts "remove_old_dumps failed: #{e.message}"
       end
