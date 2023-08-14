@@ -1,0 +1,21 @@
+AllCops:
+  NewCops: disable
+  TargetRubyVersion: 2.7
+Layout/LineLength:
+  Max: 160
+Metrics/MethodLength:
+  Max: 50
+Metrics/ClassLength:
+  Max: 750
+Metrics/BlockLength:
+  Max: 50
+Metrics/ParameterLists:
+  Max: 6
+Metrics/AbcSize:
+  Max: 60
+Metrics/CyclomaticComplexity:
+  Max: 25
+Metrics/PerceivedComplexity:
+  Max: 25
+Style/Documentation:
+  Enabled: false

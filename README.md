@@ -46,8 +46,12 @@ require 'capistrano/ops'
 
 | Script                                           | Description                                                       |
 | ------------------------------------------------ | ----------------------------------------------------------------- |
-| `cap <environment> backup:create`                | creates backup of postgres database on the server                 |
-| `cap <environment> backup:pull`                  | download latest postgres backup from server                       |
+| `cap <environment> backup:create`                | creates backup of postgres database on the server (deprecated)    |
+| `cap <environment> backup:pull`                  | download latest postgres backup from server (deprecated)          |
+| `cap <environment> backup:database:create`       | creates backup of postgres database on the server                 |
+| `cap <environment> backup:database:pull`         | download latest postgres backup from server                       |
+| `cap <environment> backup:storage:create`        | creates backup of storage on the server                           |
+| `cap <environment> backup:storage:pull`          | download latest storage backup from server                        |
 | `cap <environment> figaro_yml:compare`           | compare local application.yml with server application.yml         |
 | `cap <environment> figaro_yml:get`               | shows env vars from server application.yml configured thru figaro |
 | `cap <environment> logs:rails`                   | display server log live                                           |
@@ -55,6 +59,8 @@ require 'capistrano/ops'
 | `cap <environment> invoke:rake TASK=<your:task>` | invoke rake task on server                                        |
 | `rake pg:dump`                                   | creates postgres database backup                                  |
 | `rake pg:remove_old_dumps`                       | remove old postgres backups                                       |
+| `rake storage:backup`                            | creates backup of storage                                         |
+| `rake storage:remove_old_backups`                | remove old storage backups                                        |
 
 ## Usage
 
@@ -72,23 +78,26 @@ production:
 
 ### Optional Settings for backup task
 
-| env                | description                                                               |                            type/options                            |
-| ------------------ | ------------------------------------------------------------------------- | :----------------------------------------------------------------: |
-| NUMBER_OF_BACKUPS  | number of backups to keep (default: 1)                                    |                              `number`                              |
-| BACKUPS_ENABLED    | enable/disable backup task (default: Rails.env == 'production')           |                             `boolean`                              |
-| DEFAULT_URL        | notification message title (default: "#{database} Backup")                |                              `string`                              |
-| NOTIFICATION_TYPE  | for notification (default: nil)                                           |                    `string` (`webhook`/`slack`)                    |
-| NOTIFICATION_LEVEL | for notification (default: nil)                                           |                     `string` (`info`/`error`)                      |
-| SLACK_SECRET       | for slack integration                                                     | `string` (e.g. `xoxb-1234567890-1234567890-1234567890-1234567890`) |
-| SLACK_CHANNEL      | for slack integration                                                     |                    `string` (e.g. `C234567890`)                    |
-| WEBHOOK_URL        | Webhook server to send message                                            |                      e.g `http://example.com`                      |
-| WEBHOOK_SECRET     | Secret to send with uses md5-hmac hexdigest in header`x-hub-signature`    |                                ---                                 |
-| BACKUP_PROVIDER    | Backup provider (default: nil)                                            |                          `string` (`s3`)                           |
-| S3_BACKUP_BUCKET   | S3 bucket name for backups                                                |                              `string`                              |
-| S3_BACKUP_REGION   | S3 region for backups                                                     |                              `string`                              |
-| S3_BACKUP_KEY      | S3 access key for backups                                                 |                              `string`                              |
-| S3_BACKUP_SECRET   | S3 secret key for backups                                                 |                              `string`                              |
-| S3_BACKUP_ENDPOINT | S3 endpoint for backups (optional, used for other S3 compatible services) |                              `string`                              |
+| env                        | description                                                                                         |                            type/options                            |
+| -------------------------- | --------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------: |
+| NUMBER_OF_BACKUPS          | number of backups to keep (default: 7)                                                              |                              `number`                              |
+| NUMBER_OF_LOCAL_BACKUPS    | number of backups to keep locally (default: nil)                                                    |                              `number`                              |
+| NUMBER_OF_EXTERNAL_BACKUPS | number of backups to keep externally (default: nil)                                                 |                              `number`                              |
+| BACKUPS_ENABLED            | enable/disable backup task (default: Rails.env == 'production')                                     |                             `boolean`                              |
+| EXTERNAL_BACKUP_ENABLED    | enable/disable external backup (default: false) (only if 'BACKUPS_ENABLED', needs additional setup) |                             `boolean`                              |
+| DEFAULT_URL                | notification message title (default: "#{database} Backup")                                          |                              `string`                              |
+| NOTIFICATION_TYPE          | for notification (default: nil)                                                                     |                    `string` (`webhook`/`slack`)                    |
+| NOTIFICATION_LEVEL         | for notification (default: nil)                                                                     |                     `string` (`info`/`error`)                      |
+| SLACK_SECRET               | for slack integration                                                                               | `string` (e.g. `xoxb-1234567890-1234567890-1234567890-1234567890`) |
+| SLACK_CHANNEL              | for slack integration                                                                               |                    `string` (e.g. `C234567890`)                    |
+| WEBHOOK_URL                | Webhook server to send message                                                                      |                      e.g `http://example.com`                      |
+| WEBHOOK_SECRET             | Secret to send with uses md5-hmac hexdigest in header`x-hub-signature`                              |                                ---                                 |
+| BACKUP_PROVIDER            | Backup provider (default: nil)                                                                      |                          `string` (`s3`)                           |
+| S3_BACKUP_BUCKET           | S3 bucket name for backups                                                                          |                              `string`                              |
+| S3_BACKUP_REGION           | S3 region for backups                                                                               |                              `string`                              |
+| S3_BACKUP_KEY              | S3 access key for backups                                                                           |                              `string`                              |
+| S3_BACKUP_SECRET           | S3 secret key for backups                                                                           |                              `string`                              |
+| S3_BACKUP_ENDPOINT         | S3 endpoint for backups (optional, used for other S3 compatible services)                           |                              `string`                              |
 
 ### use with whenever/capistrano
 
@@ -102,10 +111,12 @@ set :output, -> { '2>&1 | logger -t whenever_cron' }
 
 every :day, at: '2:00 am' do
   rake 'pg:dump'
+  rake 'storage:backup'
 end
 
 every :day, at: '3:00 am' do
   rake 'pg:remove_old_dumps'
+  rake 'storage:remove_old_backups'
 end
 ```
 
@@ -151,6 +162,34 @@ if you want to use notification level you have to add this to your `application.
 
 ```ruby
 NOTIFICATION_LEVEL: 'info' # default is 'error'
+```
+
+## Backups
+
+if you want to configure the number of backups you have to add this to your `application.yml`
+
+```ruby
+NUMBER_OF_BACKUPS: 7 # default is 7 (local + external)
+```
+
+to fine tune the number of local and external backups you can use this:
+
+```ruby
+NUMBER_OF_LOCAL_BACKUPS: 7 # default is nil (local)
+NUMBER_OF_EXTERNAL_BACKUPS: 7 # default is nil (local)
+```
+
+### Backup provider
+
+if you want to use an external backup provider you have to add this to your `application.yml`
+
+```ruby
+BACKUP_PROVIDER: 's3'
+S3_BACKUP_BUCKET: '<your-s3-bucket>'
+S3_BACKUP_REGION: '<your-s3-region>'
+S3_BACKUP_KEY: '<your-s3-key>'
+S3_BACKUP_SECRET: '<your-s3-secret>'
+S3_BACKUP_ENDPOINT: '<your-s3-endpoint>' # optional, used for other S3 compatible services
 ```
 
 ## Contributing
