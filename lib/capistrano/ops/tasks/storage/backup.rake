@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
 namespace :storage do
   @backup_path = Rails.root.join(Rails.env.development? ? 'tmp/backups' : '../../shared/backups').to_s
   @storage_path = Rails.root.join(Rails.env.development? ? 'storage' : '../../shared/storage').to_s
@@ -51,16 +50,9 @@ namespace :storage do
   end
 
   def size_str(size)
-    case size
-    when 0..1024
-      "#{size} B"
-    when 1024..1024 * 1024
-      "#{size / 1024} KB"
-    when 1024 * 1024..1024 * 1024 * 1024
-      "#{size / 1024 / 1024} MB"
-    when 1024 * 1024 * 1024..1024 * 1024 * 1024 * 1024
-      "#{size / 1024 / 1024 / 1024} GB"
-    end
+    units = %w[B KB MB GB TB]
+    e = (Math.log(size) / Math.log(1024)).floor
+    s = format('%.2f', size.to_f / 1024**e)
+    s.sub(/\.?0*$/, units[e])
   end
 end
-# rubocop:enable Metrics/BlockLength

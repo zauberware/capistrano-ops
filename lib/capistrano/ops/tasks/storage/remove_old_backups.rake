@@ -6,8 +6,8 @@ namespace :storage do
   backups_enabled = Rails.env.production? || ENV['BACKUPS_ENABLED'] == 'true'
   external_backup = Rails.env.production? || ENV['EXTERNAL_BACKUP_ENABLED'] == 'true'
 
-  @env_local_no = ENV['NUMBER_OF_LOCAL_BACKUPS']
-  @env_external_no = ENV['NUMBER_OF_EXTERNAL_BACKUPS']
+  @env_local_no = ENV['NUMBER_OF_LOCAL_BACKUPS'].present? ? ENV['NUMBER_OF_LOCAL_BACKUPS'] : nil
+  @env_external_no = ENV['NUMBER_OF_EXTERNAL_BACKUPS'].present? ? ENV['NUMBER_OF_EXTERNAL_BACKUPS'] : nil
   @total_local_backups_no = (@env_local_no || ENV['NUMBER_OF_BACKUPS'] || 7).to_i
   @total_external_backups_no = (@env_external_no || ENV['NUMBER_OF_BACKUPS'] || 7).to_i
   desc 'remove old storage backups'
@@ -35,7 +35,8 @@ namespace :storage do
       'xargs rm -rf'
     ]
 
-    system(commandlist.join(' | '))
+    result = system(commandlist.join(' | ')) if @total_local_backups_no.positive?
+    puts 'remove_old_backups: local cleanup finished' if result
 
     if ENV['BACKUP_PROVIDER'].present? && external_backup
       unless @total_external_backups_no.positive?

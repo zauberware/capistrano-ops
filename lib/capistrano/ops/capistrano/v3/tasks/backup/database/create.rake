@@ -6,7 +6,7 @@ namespace :backup do
     include BackupHelper
     # Default to :app role
     rake_roles = fetch(:rake_roles, :app)
-    
+
     desc 'create a backup of the server database'
     task :create do
       on roles(rake_roles) do
