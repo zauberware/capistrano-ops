@@ -5,9 +5,9 @@ namespace :pg do
   include PostgresHelper
 
   task :dump do
-    backup_path = config[:backup_path]
-    backups_enabled = config[:backups_enabled]
-    external_backup = config[:external_backup]
+    backup_path = configuration[:backup_path]
+    backups_enabled = configuration[:backups_enabled]
+    external_backup = configuration[:external_backup]
 
     unless backups_enabled
       puts 'dump: Backups are disabled'
@@ -15,7 +15,7 @@ namespace :pg do
     end
 
     notification = Notification::Api.new
-    commandlist = dump_cmd(config)
+    commandlist = dump_cmd(configuration)
 
     system "mkdir -p #{backup_path}" unless Dir.exist?(backup_path)
 
