@@ -11,13 +11,13 @@ module Backup
       self.region = region
       self.access_key_id = access_key_id
       self.secret_access_key = secret_access_key
-      config = {
+      configuration = {
         region: region,
         access_key_id: access_key_id,
         secret_access_key: secret_access_key
       }
-      config[:endpoint] = endpoint unless endpoint.nil?
-      self.s3_resource = Aws::S3::Resource.new(config)
+      configuration[:endpoint] = endpoint unless endpoint.nil?
+      self.s3_resource = Aws::S3::Resource.new(configuration)
     end
 
     def upload(backup_file, key)

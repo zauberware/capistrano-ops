@@ -17,11 +17,11 @@ namespace :storage do
     date = Time.now.to_i
     @filename = "storage_#{date}.tar.gz"
     FileUtils.mkdir_p(@backup_path) unless Dir.exist?(@backup_path)
-    result = system "tar -zcf #{@backup_path}/#{@filename} -C #{@storage_path} ."
-    FileUtils.rm_rf("#{@backup_path}/#{filename}") unless result
-    puts result ? "Backup created: #{@backup_path}/#{@filename} (#{size_str(File.size("#{@backup_path}/#{@filename}"))})" : 'Backup failed removing dump file'
+    response = system "tar -zcf #{@backup_path}/#{@filename} -C #{@storage_path} ."
+    FileUtils.rm_rf("#{@backup_path}/#{filename}") unless response
+    puts response ? "Backup created: #{@backup_path}/#{@filename} (#{size_str(File.size("#{@backup_path}/#{@filename}"))})" : 'Backup failed removing dump file'
 
-    if ENV['BACKUP_PROVIDER'].present? && external_backup && result
+    if ENV['BACKUP_PROVIDER'].present? && external_backup && response
       puts "Uploading #{@filename} to #{ENV['BACKUP_PROVIDER']}..."
       provider = Backup::Api.new
       begin
@@ -31,14 +31,14 @@ namespace :storage do
         puts "#{@filename} upload failed: #{e.message}"
       end
     end
-    notification.send_backup_notification(result, title, message(result), { date: date, backup_path: @backup_path, database: 'storage' })
+    notification.send_backup_notification(response, title, message(response), { date: date, backup_path: @backup_path, database: 'storage' })
   end
 
   def title
     ENV['DEFAULT_URL'] || "#{Rails.env} Backup"
   end
 
-  def message(result)
+  def message(result=false)
     messages = []
     if result
       messages << "Backup of storage folder successfully finished at #{Time.now}"

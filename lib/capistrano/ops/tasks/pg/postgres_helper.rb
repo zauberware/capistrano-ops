@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module PostgresHelper
-  def config
-    @config ||=
+  def configuration
+    @configuration ||=
       {
         database: Rails.configuration.database_configuration[Rails.env]['database'],
         username: Rails.configuration.database_configuration[Rails.env]['username'],
@@ -19,10 +19,10 @@ module PostgresHelper
     ENV['DEFAULT_URL'] || "#{Rails.env} Backup"
   end
 
-  def content(result, config = {})
-    @database = config[:database]
-    @backup_path = config[:backup_path]
-    @filename = config[:filename]
+  def content(result, settings = {})
+    @database = settings[:database]
+    @backup_path = settings[:backup_path]
+    @filename = settings[:filename]
 
     messages = []
     if result
@@ -34,13 +34,13 @@ module PostgresHelper
     messages.join("\n")
   end
 
-  def dump_cmd(config = {})
-    @hostname = config[:hostname]
-    @database = config[:database]
-    @username = config[:username]
-    @password = config[:password]
-    @portnumber = config[:portnumber]
-    @backup_path = config[:backup_path]
+  def dump_cmd(settings = {})
+    @hostname = settings[:hostname]
+    @database = settings[:database]
+    @username = settings[:username]
+    @password = settings[:password]
+    @portnumber = settings[:portnumber]
+    @backup_path = settings[:backup_path]
 
     @date = Time.now.to_i
     options = []
