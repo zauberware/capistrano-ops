@@ -19,7 +19,7 @@ namespace :backup do
     on roles(rake_roles) do
       warn "deprecated: use 'backup:database:pull' instead, in future versions this task will be removed"
       backup_file = backup_file_name('database')
-      download! "#{shared_path}/backups/#{backup_file}"
+      download! "#{shared_path}/backups/#{backup_file}", backup_file
     end
   end
 end
