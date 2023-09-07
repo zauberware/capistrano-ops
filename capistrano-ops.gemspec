@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ['lib']
 
-  s.required_ruby_version = '~> 2.7.0'
+  s.required_ruby_version = '>= 2.7.0', '< 3.3.0'
   s.add_dependency 'aws-sdk-s3', '~> 1.128'
   s.add_dependency 'faraday'
   s.add_dependency 'nokogiri'
