@@ -1,8 +1,39 @@
-# capistrano-ops
+# capistrano-ops - Comprehensive DevOps Utility for Rails 🛠️
 
-Library of useful scripts for DevOps using capistrano with rails.
+The capistrano-ops gem is a valuable library, tailor-made for Rails DevOps professionals, offering an array of beneficial scripts to streamline and enhance operations with Capistrano. The focus is on seamless integration with Capistrano version 3 and above.
 
-**Only supports Capistrano 3 and above**.
+## Main Features:
+
+🗃️ **Database and Storage Backups:**
+ - Create, pull, and manage backups of your Postgres database and server storage.
+ - Delegation of old backup removal for both Postgres database and server storage.
+
+🛠️ **Configuration Management:**
+ - Compare application.yml files between local and server environments using figaro_yml:compare.
+ - Fetch server environment variables set via Figaro with figaro_yml:get.
+
+📜 **Logging and Task Management:**
+Real-time viewing of Rails server logs.
+Showcase the server app's crontab generated with the 'whenever' gem.
+Ability to invoke server-specific rake tasks.
+
+🔔 **Notification Integrations:**
+ - Set up notifications through Slack or generic Webhooks.
+ - Customize notification levels (info/error).
+
+⚙️ **Backup Settings Customization:**
+ - Define the number of backups retained, both locally and externally.
+ - Toggle backup tasks and external backups.
+ - S3 integration for backup storage, including customization of bucket, region, and endpoint details.
+
+📅 **Schedule Tasks:**
+ - Couple with the 'whenever' gem to schedule daily backup creation and old backup removal.
+
+🔗 **Slack & Webhook Integrations:**
+ - Integrate seamlessly with Slack or use webhooks for notifications, alerting you on essential operations or any potential issues.
+
+☁️ **Backup Providers:**
+ - S3 and other S3-compatible services are supported to ensure your data remains secure and accessible.
 
 ## Requirements
 
