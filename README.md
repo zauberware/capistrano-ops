@@ -13,9 +13,9 @@ The capistrano-ops gem is a valuable library, tailor-made for Rails DevOps profe
  - Fetch server environment variables set via Figaro with figaro_yml:get.
 
 📜 **Logging and Task Management:**
-Real-time viewing of Rails server logs.
-Showcase the server app's crontab generated with the 'whenever' gem.
-Ability to invoke server-specific rake tasks.
+ - Real-time viewing of Rails server logs.
+ - Showcase the server app's crontab generated with the 'whenever' gem.
+ - Ability to invoke server-specific rake tasks.
 
 🔔 **Notification Integrations:**
  - Set up notifications through Slack or generic Webhooks.
