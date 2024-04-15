@@ -5,35 +5,43 @@ The capistrano-ops gem is a valuable library, tailor-made for Rails DevOps profe
 ## Main Features:
 
 🗃️ **Database and Storage Backups:**
- - Create, pull, and manage backups of your Postgres database and server storage.
- - Delegation of old backup removal for both Postgres database and server storage.
+
+- Create, pull, and manage backups of your Postgres database and server storage.
+- Delegation of old backup removal for both Postgres database and server storage.
 
 🛠️ **Configuration Management:**
- - Compare application.yml files between local and server environments using figaro_yml:compare.
- - Fetch server environment variables set via Figaro with figaro_yml:get.
+
+- Compare application.yml files between local and server environments using figaro_yml:compare.
+- Fetch server environment variables set via Figaro with figaro_yml:get.
 
 📜 **Logging and Task Management:**
- - Real-time viewing of Rails server logs.
- - Showcase the server app's crontab generated with the 'whenever' gem.
- - Ability to invoke server-specific rake tasks.
+
+- Real-time viewing of Rails server logs.
+- Showcase the server app's crontab generated with the 'whenever' gem.
+- Ability to invoke server-specific rake tasks.
 
 🔔 **Notification Integrations:**
- - Set up notifications through Slack or generic Webhooks.
- - Customize notification levels (info/error).
+
+- Set up notifications through Slack or generic Webhooks.
+- Customize notification levels (info/error).
 
 ⚙️ **Backup Settings Customization:**
- - Define the number of backups retained, both locally and externally.
- - Toggle backup tasks and external backups.
- - S3 integration for backup storage, including customization of bucket, region, and endpoint details.
+
+- Define the number of backups retained, both locally and externally.
+- Toggle backup tasks and external backups.
+- S3 integration for backup storage, including customization of bucket, region, and endpoint details.
 
 📅 **Schedule Tasks:**
- - Couple with the 'whenever' gem to schedule daily backup creation and old backup removal.
+
+- Couple with the 'whenever' gem to schedule daily backup creation and old backup removal.
 
 🔗 **Slack & Webhook Integrations:**
- - Integrate seamlessly with Slack or use webhooks for notifications, alerting you on essential operations or any potential issues.
+
+- Integrate seamlessly with Slack or use webhooks for notifications, alerting you on essential operations or any potential issues.
 
 ☁️ **Backup Providers:**
- - S3 and other S3-compatible services are supported to ensure your data remains secure and accessible.
+
+- S3 and other S3-compatible services are supported to ensure your data remains secure and accessible.
 
 ## Requirements
 
@@ -116,6 +124,7 @@ production:
 | NUMBER_OF_EXTERNAL_BACKUPS | number of backups to keep externally (default: nil)                                                 |                              `number`                              |
 | BACKUPS_ENABLED            | enable/disable backup task (default: Rails.env == 'production')                                     |                             `boolean`                              |
 | EXTERNAL_BACKUP_ENABLED    | enable/disable external backup (default: false) (only if 'BACKUPS_ENABLED', needs additional setup) |                             `boolean`                              |
+| KEEP_LOCAL_STORAGE_BACKUPS | keep local storage backups (default: Rails.env == 'production')                                     |                             `boolean`                              |
 | DEFAULT_URL                | notification message title (default: "#{database} Backup")                                          |                              `string`                              |
 | NOTIFICATION_TYPE          | for notification (default: nil)                                                                     |                    `string` (`webhook`/`slack`)                    |
 | NOTIFICATION_LEVEL         | for notification (default: nil)                                                                     |                     `string` (`info`/`error`)                      |

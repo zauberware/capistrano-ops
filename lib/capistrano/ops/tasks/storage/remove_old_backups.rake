@@ -5,6 +5,7 @@ namespace :storage do
   backup_path = Rails.root.join(Rails.env.development? ? 'tmp/backups' : '../../shared/backups').to_s
   backups_enabled = Rails.env.production? || ENV['BACKUPS_ENABLED'] == 'true'
   external_backup = Rails.env.production? || ENV['EXTERNAL_BACKUP_ENABLED'] == 'true'
+  local_backup = Rails.env.production? || ENV['KEEP_LOCAL_STORAGE_BACKUPS'] == 'true'
 
   @env_local_no = ENV['NUMBER_OF_LOCAL_BACKUPS'].present? ? ENV['NUMBER_OF_LOCAL_BACKUPS'] : nil
   @env_external_no = ENV['NUMBER_OF_EXTERNAL_BACKUPS'].present? ? ENV['NUMBER_OF_EXTERNAL_BACKUPS'] : nil
@@ -30,12 +31,12 @@ namespace :storage do
     commandlist = [
       "cd #{backup_path} && ls -lt ",
       "grep -E -i #{bash_regex} ",
-      "tail -n +#{@total_local_backups_no + 1} ",
+      "tail -n +#{local_backup ? (@total_local_backups_no + 1) : 0} ",
       "awk '{print $9}' ",
       'xargs rm -rf'
     ]
 
-    result = system(commandlist.join(' | ')) if @total_local_backups_no.positive?
+    result = system(commandlist.join(' | ')) if @total_local_backups_no.positive? && local_backup || !local_backup && external_backup
     puts 'remove_old_backups: local cleanup finished' if result
 
     if ENV['BACKUP_PROVIDER'].present? && external_backup
