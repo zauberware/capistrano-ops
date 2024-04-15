@@ -5,7 +5,8 @@ namespace :storage do
   backup_path = Rails.root.join(Rails.env.development? ? 'tmp/backups' : '../../shared/backups').to_s
   backups_enabled = Rails.env.production? || ENV['BACKUPS_ENABLED'] == 'true'
   external_backup = Rails.env.production? || ENV['EXTERNAL_BACKUP_ENABLED'] == 'true'
-  local_backup = Rails.env.production? || ENV['KEEP_LOCAL_STORAGE_BACKUPS'] == 'true'
+  local_backup = Rails.env.production?
+  local_backup = ENV['KEEP_LOCAL_STORAGE_BACKUPS'] == 'true' if ENV['KEEP_LOCAL_STORAGE_BACKUPS'].present?
 
   @env_local_no = ENV['NUMBER_OF_LOCAL_BACKUPS'].present? ? ENV['NUMBER_OF_LOCAL_BACKUPS'] : nil
   @env_external_no = ENV['NUMBER_OF_EXTERNAL_BACKUPS'].present? ? ENV['NUMBER_OF_EXTERNAL_BACKUPS'] : nil
