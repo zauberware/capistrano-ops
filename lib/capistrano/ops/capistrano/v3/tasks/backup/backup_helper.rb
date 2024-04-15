@@ -12,7 +12,7 @@ module BackupHelper
 
   def download_backup(backup_file, type)
     puts "Downloading #{type} backup"
-    download! "#{shared_path}/backups/#{backup_file}" , backup_file
+    download! "#{shared_path}/backups/#{backup_file}", backup_file
     puts "Download finished\nDeleting temporary backup..."
     cleanup_backup(backup_file, "Download finished\nDeleting temporary backup...")
   end
