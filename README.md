@@ -96,6 +96,9 @@ require 'capistrano/ops'
 | `cap <environment> logs:rails`                   | display server log live                                           |
 | `cap <environment> whenever:show_crontab`        | display server app crontab generated with whenever                |
 | `cap <environment> invoke:rake TASK=<your:task>` | invoke rake task on server                                        |
+| `cap <environment> logrotate:enable`             | enable logrotate for logfiles on server                           |
+| `cap <environment> logrotate:disable`            | disable logrotate for logfiles on server                          |
+| `cap <environment> logrotate:check`              | show logrotate status for logfiles on server                      |
 | `rake pg:dump`                                   | creates postgres database backup                                  |
 | `rake pg:remove_old_dumps`                       | remove old postgres backups                                       |
 | `rake storage:backup`                            | creates backup of storage                                         |
@@ -232,6 +235,35 @@ S3_BACKUP_SECRET: '<your-s3-secret>'
 S3_BACKUP_ENDPOINT: '<your-s3-endpoint>' # optional, used for other S3 compatible services
 ```
 
+## Logrotate
+
+Logrotate is a utility designed for administrators who manage servers producing a high volume of log files to help them save some disk space as well as to avoid a potential risk making a system unresponsive due to the lack of disk space.
+
+The capistrano-ops gem provides a set of tasks to manage logrotate on your server:
+
+- `cap <environment> logrotate:enable` - This task enables logrotate for logfiles on the server.
+- `cap <environment> logrotate:disable` - This task disables logrotate for logfiles on the server.
+- `cap <environment> logrotate:check` - This task shows the logrotate status for logfiles on the server.
+
+### Configuration
+
+You can optionally specify the logrotate configuration file path (Defaults to `/etc/logrotate.conf`):
+
+```ruby
+# Defaults to '/etc/logrotate.conf'
+set :logrotate_path, '/path/to/your/logrotate.conf'
+```
+
+### Usage
+
+To use logrotate, you need to have it installed on your server. If it's not installed, you can install it using the package manager of your system. For example, on Ubuntu, you can install it using apt:
+
+```bash
+sudo apt-get install logrotate
+```
+
+Once logrotate is installed, you can use the capistrano-ops tasks to manage it.
+
 ## Contributing
 
 1. Fork it ( https://github.com/zauberware/capistrano-ops/fork )
@@ -243,6 +275,10 @@ S3_BACKUP_ENDPOINT: '<your-s3-endpoint>' # optional, used for other S3 compatibl
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+
+```
+
+```
 
 ```
 
