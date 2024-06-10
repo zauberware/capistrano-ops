@@ -1,0 +1,10 @@
+<%= @log_file_path %>/*.log {
+        daily
+        dateext
+        missingok
+        rotate 52
+        compress
+        delaycompress
+        notifempty
+        copytruncate
+}

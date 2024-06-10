@@ -1,0 +1,8 @@
+env :PATH, ENV['PATH']
+set :output, -> { '2>&1 | logger -t logrotate' }
+
+job_type :logrotate, '/usr/sbin/logrotate -s <%= @shared_path %>/logrotate/status <%= @shared_path %>/logrotate/logrotate.conf :output'
+
+every "0 0 * * *" do
+    logrotate "logrotate"
+end
