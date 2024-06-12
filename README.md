@@ -264,6 +264,34 @@ sudo apt-get install logrotate
 
 Once logrotate is installed, you can use the capistrano-ops tasks to manage it.
 
+## Wkhtmltopdf Setup
+
+This script is used to setup `wkhtmltopdf-binary` in your deployment environment. It is designed to work with Capistrano.
+
+The main task `setup` is hooked to run after the `deploy:symlink:release` task.
+It performs the following operations:
+
+- unzip the necessary binary file
+
+- set the binary file permissions
+
+The script assumes, that you have a intializer file for `wicked_pdf` gem, which sets the path to the binary file.
+for example:
+
+```ruby
+# config/initializers/wicked_pdf.rb
+WickedPdf.config = {
+  exe_path: "#{Bundler.bundle_path}/gems/wkhtmltopdf-binary-0.12.6.6/bin/wkhtmltopdf_ubuntu_18.04_amd64",
+}
+```
+
+To use this script, include it in your Capistrano tasks and it will automatically run during deployment.
+
+```ruby
+# Capfile
+require 'capistrano/ops/wkhtmltopdf'
+```
+
 ## Contributing
 
 1. Fork it ( https://github.com/zauberware/capistrano-ops/fork )
