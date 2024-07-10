@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 require 'capistrano/ops/helper'
-require 'capistrano/ops/backup/helper'
+require 'capistrano/ops/logrotate/helpers'
+require 'capistrano/ops/logrotate/paths'
 
 module TaskLoader
   extend Capistrano::Ops::Helper
@@ -15,4 +16,4 @@ module TaskLoader
   end
 end
 
-TaskLoader.load_tasks_if_gem_present('rails', 'backup/tasks', 'WARNING: Gemfile does not include rails gem which is required for backup tasks')
+TaskLoader.load_tasks_if_gem_present('whenever', 'logrotate/tasks', 'WARNING: Gemfile does not include whenever gem which is required for logrotate tasks')
