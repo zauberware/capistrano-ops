@@ -2,10 +2,11 @@
 
 module Capistrano
   module Ops
-    require 'capistrano/ops/backup'
-    require 'capistrano/ops/notification'
-    require 'capistrano/ops/railtie' if defined?(Rails)
+    require 'capistrano/ops/rails/lib/backup'
+    require 'capistrano/ops/rails/lib/notification'
+    require 'capistrano/ops/rails/lib/railtie' if defined?(Rails)
     require 'capistrano/ops/capistrano' if defined?(Capistrano::VERSION)
+
     def self.path
       Dir.pwd
     end
