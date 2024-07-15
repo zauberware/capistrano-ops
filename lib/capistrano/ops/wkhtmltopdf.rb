@@ -15,5 +15,5 @@ module TaskLoader
   end
 end
 
-TaskLoader.load_tasks_if_gem_present('wicked-pdf', 'wkhtmltopdf/tasks',
+TaskLoader.load_tasks_if_gem_present('wicked_pdf', 'wkhtmltopdf/tasks',
                                      'WARNING: Gemfile does not include wkhtmltopdf-binary gem which is required for wkhtmltopdf tasks')
