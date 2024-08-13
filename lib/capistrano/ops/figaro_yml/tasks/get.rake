@@ -8,11 +8,11 @@ namespace :figaro_yml do
       invoke 'figaro_yml:create_local'
     else
       local_yml = local_figaro_yml(figaro_yml_env)
-      local_global, local_stage = configs(local_yml, figaro_yml_env)
+      local_global, local_stage, local_rest = configs(local_yml, figaro_yml_env)
       on release_roles :all do
         remote = capture "cat #{figaro_yml_remote_path}"
         remote_yml = YAML.safe_load(remote).sort.to_h
-        remote_global, remote_stage = configs(remote_yml, figaro_yml_env)
+        remote_global, remote_stage, _remote_rest = configs(remote_yml, figaro_yml_env)
         differences_global = compare_hashes(remote_global, local_global || {})
         differences_stage = compare_hashes(remote_stage, local_stage || {})
 
@@ -29,10 +29,10 @@ namespace :figaro_yml do
         global_overwrite = ask_to_overwrite('Overwrite local application.yml globals') if differences_global
         puts 'Nothing written to local application.yml' unless stage_overwrite || global_overwrite
         exit unless stage_overwrite || global_overwrite
-
         # compose new yml
+
         composed_yml = {}
-        composed_yml.merge!(local_yml) # local yml is always included to avoid losing any data
+        composed_yml.merge!(local_rest) # local yml is always included to avoid losing any data
         composed_yml.merge!(local_global) unless global_overwrite
         composed_yml.merge!(remote_global) if global_overwrite
         composed_yml[figaro_yml_env.to_s] = stage_overwrite ? remote_stage : local_stage
