@@ -10,12 +10,12 @@ namespace :figaro_yml do
     local = local_figaro_yml(figaro_yml_env)
 
     # Split into stage-specific and global configurations
-    local_global_env, local_stage_env = configs(local, figaro_yml_env)
+    local_global_env, local_stage_env, _local_rest = configs(local, figaro_yml_env)
 
     on release_roles :all do
       # Read and parse remote application.yml
       remote = YAML.safe_load(capture("cat #{figaro_yml_remote_path}"))
-      remote_global_env, remote_stage_env = configs(remote, figaro_yml_env)
+      remote_global_env, remote_stage_env, _remote_rest = configs(remote, figaro_yml_env)
 
       # Compare hashes and handle nil results with empty hashes
       differences_global = compare_hashes(local_global_env, remote_global_env)

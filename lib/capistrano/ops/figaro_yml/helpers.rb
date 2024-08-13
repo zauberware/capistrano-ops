@@ -56,20 +56,10 @@ module Capistrano
           end
         end
 
-        def local_figaro_yml(env)
+        def local_figaro_yml(_env)
           @local_figaro_yml ||= YAML.load(ERB.new(File.read(figaro_yml_local_path)).result)
-          local_figaro = {}
-          deployment_env = fetch(:rails_env, env).to_s
 
-          @local_figaro_yml.each do |key, value|
-            if key == env
-              local_figaro[deployment_env] = @local_figaro_yml[key]
-            elsif !value.is_a?(Hash)
-              local_figaro[key] = @local_figaro_yml[key]
-            end
-          end
-
-          local_figaro
+          @local_figaro_yml || {}
         end
 
         def local_yaml
@@ -85,9 +75,18 @@ module Capistrano
         end
 
         def configs(yaml, env)
-          stage_yml = yaml[env.to_s]&.sort.to_h
+          env_str = env.to_s
+          stage_yml = yaml[env_str]&.sort.to_h
           global_yml = remove_nested(yaml)&.sort.to_h
-          [global_yml, stage_yml]
+
+          other_stages_yml = stages.each_with_object({}) do |f, hash|
+            f_str = f.to_s
+            next if f_str == env_str
+
+            hash[f_str] = yaml[f_str]&.sort.to_h
+          end.compact
+
+          [global_yml, stage_yml, other_stages_yml]
         end
 
         def remove_nested(hash)
