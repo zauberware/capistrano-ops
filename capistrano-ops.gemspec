@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'nokogiri'
   s.add_dependency 'rails'
   s.add_development_dependency 'bundler', '~> 2.4.12'
-  s.add_development_dependency 'rake', '~> 10.0'
+  s.add_development_dependency 'rake', '~> 12.3'
   s.add_development_dependency 'rubocop', '~> 1.56.2' # rubocop ruby
   s.add_development_dependency 'rubocop-performance', '~> 1.19.0' # speed up rubocop
 end
