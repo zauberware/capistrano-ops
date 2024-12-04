@@ -8,8 +8,8 @@ namespace :storage do
   local_backup = Rails.env.production?
   local_backup = ENV['KEEP_LOCAL_STORAGE_BACKUPS'] == 'true' if ENV['KEEP_LOCAL_STORAGE_BACKUPS'].present?
 
-  @env_local_no = ENV['NUMBER_OF_LOCAL_BACKUPS'].present? ? ENV['NUMBER_OF_LOCAL_BACKUPS'] : nil
-  @env_external_no = ENV['NUMBER_OF_EXTERNAL_BACKUPS'].present? ? ENV['NUMBER_OF_EXTERNAL_BACKUPS'] : nil
+  @env_local_no = ENV['NUMBER_OF_LOCAL_BACKUPS'].presence
+  @env_external_no = ENV['NUMBER_OF_EXTERNAL_BACKUPS'].presence
   @total_local_backups_no = (@env_local_no || ENV['NUMBER_OF_BACKUPS'] || 7).to_i
   @total_external_backups_no = (@env_external_no || ENV['NUMBER_OF_BACKUPS'] || 7).to_i
   desc 'remove old storage backups'

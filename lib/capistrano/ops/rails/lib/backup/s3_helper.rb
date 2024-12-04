@@ -21,5 +21,21 @@ module Backup
     def get_items_by_month(all_items, month)
       all_items.select { |item| item[:last_modified].strftime('%Y-%m') == month }
     end
+
+    def calculate_total_size(folder_path)
+      total_size = 0
+      Find.find(folder_path) do |file_path|
+        total_size += File.size(file_path) unless File.directory?(file_path)
+      end
+      total_size
+    end
+
+    def calculate_chunk_size(total_size)
+      max_chunks = 10_000
+      min_chunk_size = 20 * 1024 * 1024 # 20MB
+      max_chunk_size = 105 * 1024 * 1024 # 105MB
+      chunk_size = [total_size / max_chunks, min_chunk_size].max
+      [chunk_size, max_chunk_size].min
+    end
   end
 end
