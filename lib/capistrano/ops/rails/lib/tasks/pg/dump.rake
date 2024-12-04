@@ -5,10 +5,10 @@ namespace :pg do
   include PostgresHelper
 
   task :dump do
-    backup_path = config[:backup_path]
-    backups_enabled = config[:backups_enabled]
-    external_backup = config[:external_backup]
-    database = config[:database]
+    backup_path = configs[:backup_path]
+    backups_enabled = configs[:backups_enabled]
+    external_backup = configs[:external_backup]
+    database = configs[:database]
     date = Time.now.to_i
     filename = "#{database}_#{date}.dump"
 

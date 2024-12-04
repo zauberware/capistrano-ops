@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module PostgresHelper
-  def config
-    @config ||= {
+  def configs
+    @configs ||= {
       database: Rails.configuration.database_configuration[Rails.env]['database'],
       username: Rails.configuration.database_configuration[Rails.env]['username'],
       password: Rails.configuration.database_configuration[Rails.env]['password'],
