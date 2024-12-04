@@ -9,11 +9,11 @@ module Backup
       self.provider_config = provider_config
     end
 
-    def upload(backup_file, filename)
+    def upload(backup_file, filename, type = 'file')
       case backup_provider
       when 's3'
         s3 = Backup::S3.new(**provider_config)
-        s3.upload(backup_file, filename)
+        s3.upload_stream(backup_file, filename, type)
       when 'scp'
         p 'SCP backup not implemented yet'
       when 'rsync'

@@ -1,58 +1,48 @@
 # frozen_string_literal: true
 
+require_relative './storage_helper'
 namespace :storage do
-  @backup_path = Rails.root.join(Rails.env.development? ? 'tmp/backups' : '../../shared/backups').to_s
-  @storage_path = Rails.root.join(Rails.env.development? ? 'storage' : '../../shared/storage').to_s
-  backups_enabled = Rails.env.production? || ENV['BACKUPS_ENABLED'] == 'true'
-  external_backup = Rails.env.production? || ENV['EXTERNAL_BACKUP_ENABLED'] == 'true'
+  include StorageHelper
 
   desc 'backup storage'
   task :backup do
+    backup_path = configuration[:backup_path]
+    storage_path = configuration[:storage_path]
+    backups_enabled = configuration[:backups_enabled]
+    external_backup = configuration[:external_backup]
+    keep_local_backups = configuration[:keep_local_backups]
+    backup_provider = configuration[:backup_provider]
     unless backups_enabled
       puts 'storage: Backups are disabled'
       exit(0)
     end
     notification = Notification::Api.new
 
-    date = Time.now.to_i
-    @filename = "storage_#{date}.tar.gz"
-    FileUtils.mkdir_p(@backup_path) unless Dir.exist?(@backup_path)
-    response = system "tar -zcf #{@backup_path}/#{@filename} -C #{@storage_path} ."
-    FileUtils.rm_rf("#{@backup_path}/#{filename}") unless response
-    puts response ? "Backup created: #{@backup_path}/#{@filename} (#{size_str(File.size("#{@backup_path}/#{@filename}"))})" : 'Backup failed removing dump file'
-
-    if ENV['BACKUP_PROVIDER'].present? && external_backup && response
-      puts "Uploading #{@filename} to #{ENV['BACKUP_PROVIDER']}..."
+    response = false
+    if keep_local_backups
+      puts "Creating backup of storage folder at #{Time.now}"
+      response = create_local_backup(@filename, storage_path, backup_path)
+    end
+    if backup_provider.present? && external_backup
+      @date = Time.now.to_i
+      @filename = "storage_#{@date}.tar.gz"
+      puts "Uploading #{@filename} to #{backup_provider}..."
       provider = Backup::Api.new
       begin
-        provider.upload("#{@backup_path}/#{@filename}", @filename.to_s)
-        puts "#{@filename} uploaded to #{ENV['BACKUP_PROVIDER']}"
+        if keep_local_backups
+          provider.upload("#{backup_path}/#{@filename}", @filename.to_s, 'file')
+        else
+          provider.upload(storage_path, @filename.to_s, 'folder')
+          response = true
+        end
+        puts "#{@filename} uploaded to #{backup_provider}" if response
       rescue StandardError => e
         puts "#{@filename} upload failed: #{e.message}"
+        response = false
       end
     end
-    notification.send_backup_notification(response, title, message(response), { date: date, backup_path: @backup_path, database: 'storage' })
-  end
 
-  def title
-    ENV['DEFAULT_URL'] || "#{Rails.env} Backup"
-  end
-
-  def message(result=false)
-    messages = []
-    if result
-      messages << "Backup of storage folder successfully finished at #{Time.now}"
-      messages << "Backup path:\`#{@backup_path}/#{@filename}\`"
-    else
-      messages << "Backup of storage folder failed at #{Time.now}"
-    end
-    messages.join("\n")
-  end
-
-  def size_str(size)
-    units = %w[B KB MB GB TB]
-    e = (Math.log(size) / Math.log(1024)).floor
-    s = format('%.2f', size.to_f / 1024**e)
-    s.sub(/\.?0*$/, units[e])
+    notification.send_backup_notification(response, title, message(response, { backup_path: backup_path, filename: @filename }),
+                                          { date: @date, backup_path: @backup_path, database: 'storage' })
   end
 end
