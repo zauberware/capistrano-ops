@@ -18,7 +18,7 @@ namespace :pg do
     end
 
     notification = Notification::Api.new
-    commandlist = dump_cmd(config)
+    commandlist = dump_cmd(configs)
 
     system "mkdir -p #{backup_path}" unless Dir.exist?(backup_path)
 
