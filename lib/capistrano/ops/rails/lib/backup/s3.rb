@@ -6,8 +6,10 @@ module Backup
   require 'zlib'
   require 'find'
   require 'capistrano/ops/rails/lib/backup/s3_helper'
+
   class S3
     include Backup::S3Helper
+
     attr_accessor :endpoint, :region, :access_key_id, :secret_access_key, :s3_resource, :s3_client
 
     def initialize(endpoint: ENV['S3_BACKUP_ENDPOINT'], region: ENV['S3_BACKUP_REGION'], access_key_id: ENV['S3_BACKUP_KEY'],
@@ -21,7 +23,6 @@ module Backup
         access_key_id: access_key_id,
         secret_access_key: secret_access_key,
         force_path_style: true
-
       }
       configuration[:endpoint] = endpoint unless endpoint.nil?
       self.s3_resource = Aws::S3::Resource.new(configuration)
@@ -46,6 +47,7 @@ module Backup
       end
     end
 
+    # rubocop:disable Metrics/MethodLength
     def upload_file_as_stream(file_path, key)
       bucket = ENV['S3_BACKUP_BUCKET']
       # Calculate total size of the file to be uploaded
@@ -55,31 +57,51 @@ module Backup
       uploaded_size = 0
 
       # Initiate multipart upload
-      multipart_upload = s3_client.create_multipart_upload(bucket: bucket, key: key)
 
       # Upload the tar.gz data from the file in parts
       part_number = 1
       parts = []
       last_logged_progress = 0
+      max_retry_time = 300 # 5 minutes in seconds
+      total_wait_time = 0
 
       begin
         File.open(file_path, 'rb') do |file|
           while (part = file.read(chunk_size)) # Read calculated chunk size
-            part_upload = s3_client.upload_part(
-              bucket: bucket,
-              key: key,
-              upload_id: multipart_upload.upload_id,
-              part_number: part_number,
-              body: part
-            )
-            parts << { part_number: part_number, etag: part_upload.etag }
-            uploaded_size += part.size
-            part_number += 1
+            retry_count = 0
+            begin
+              # Initiate multipart upload
+              multipart_upload ||= s3_client.create_multipart_upload(bucket: bucket, key: key)
+              part_upload = s3_client.upload_part(
+                bucket: bucket,
+                key: key,
+                upload_id: multipart_upload.upload_id,
+                part_number: part_number,
+                body: part
+              )
+              parts << { part_number: part_number, etag: part_upload.etag }
+              uploaded_size += part.size
+              part_number += 1
 
-            progress = (uploaded_size.to_f / total_size * 100).round
-            if progress >= last_logged_progress + 10
-              puts "Upload progress: #{progress}% complete"
-              last_logged_progress = progress
+              progress = (uploaded_size.to_f / total_size * 100).round
+              if progress >= last_logged_progress + 10
+                puts "Upload progress: #{progress}% complete"
+                last_logged_progress = progress
+              end
+            rescue StandardError => e
+              retry_count += 1
+              wait_time = 2**retry_count
+              total_wait_time += wait_time
+
+              if total_wait_time > max_retry_time
+                puts "Exceeded maximum retry time of #{max_retry_time / 60} minutes. Aborting upload."
+                raise e
+              end
+              puts "Error uploading part #{part_number}: #{e.message.split("\n").first} (Attempt #{retry_count})"
+              puts "Retry in #{wait_time} seconds"
+              sleep(wait_time) # Exponential backoff
+              puts 'Retrying upload part...'
+              retry
             end
           end
         end
@@ -109,7 +131,6 @@ module Backup
       raise e
     end
 
-    # rubocop:disable Metrics/MethodLength
     def upload_folder_as_tar_gz_stream(folder_path, key)
       bucket = ENV['S3_BACKUP_BUCKET']
 
@@ -127,31 +148,49 @@ module Backup
       # Start a thread to write the tar.gz data to the pipe
       writer_thread = start_writer_thread(folder_path, write_io)
 
-      # Initiate multipart upload
-      multipart_upload = s3_client.create_multipart_upload(bucket: bucket, key: key)
-
       # Upload the tar.gz data from the pipe in parts
       part_number = 1
       parts = []
       last_logged_progress = 0
+      max_retry_time = 300 # 5 minutes in seconds
+      total_wait_time = 0
 
       begin
         while (part = read_io.read(chunk_size)) # Read calculated chunk size
-          part_upload = s3_client.upload_part(
-            bucket: bucket,
-            key: key,
-            upload_id: multipart_upload.upload_id,
-            part_number: part_number,
-            body: part
-          )
-          parts << { part_number: part_number, etag: part_upload.etag }
-          uploaded_size += part.size
-          part_number += 1
+          retry_count = 0
+          begin
+            # Initiate multipart upload
+            multipart_upload ||= s3_client.create_multipart_upload(bucket: bucket, key: key)
+            part_upload = s3_client.upload_part(
+              bucket: bucket,
+              key: key,
+              upload_id: multipart_upload.upload_id,
+              part_number: part_number,
+              body: part
+            )
+            parts << { part_number: part_number, etag: part_upload.etag }
+            uploaded_size += part.size
+            part_number += 1
 
-          progress = (uploaded_size.to_f / total_size * 100).round
-          if progress >= last_logged_progress + 10
-            puts "Upload progress: #{progress}% complete"
-            last_logged_progress = progress
+            progress = (uploaded_size.to_f / total_size * 100).round
+            if progress >= last_logged_progress + 10
+              puts "Upload progress: #{progress}% complete"
+              last_logged_progress = progress
+            end
+          rescue StandardError => e
+            retry_count += 1
+            wait_time = 2**retry_count
+            total_wait_time += wait_time
+
+            if total_wait_time > max_retry_time
+              puts "Exceeded maximum retry time of #{max_retry_time / 60} minutes. Aborting upload."
+              raise e
+            end
+            puts "Error uploading part #{part_number}: #{e.message.split("\n").first} (Attempt #{retry_count})"
+            puts "Retry in #{wait_time} seconds"
+            sleep(wait_time) # Exponential backoff
+            puts 'Retrying upload part...'
+            retry
           end
         end
 
@@ -165,11 +204,13 @@ module Backup
         puts 'Completed multipart upload'
       rescue StandardError => e
         # Abort multipart upload in case of error
-        s3_client.abort_multipart_upload(
-          bucket: bucket,
-          key: key,
-          upload_id: multipart_upload.upload_id
-        )
+        if multipart_upload
+          s3_client.abort_multipart_upload(
+            bucket: bucket,
+            key: key,
+            upload_id: multipart_upload.upload_id
+          )
+        end
         puts "Aborted multipart upload due to error: #{e.message}"
         raise e
       ensure
@@ -183,6 +224,8 @@ module Backup
       raise e
     end
     # rubocop:enable Metrics/MethodLength
+
+    private
 
     def start_writer_thread(folder_path, write_io)
       Thread.new do
