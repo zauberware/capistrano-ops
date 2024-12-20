@@ -32,7 +32,7 @@ module Backup
 
     def calculate_chunk_size(total_size)
       max_chunks = 10_000
-      min_chunk_size = 20 * 1024 * 1024 # 20MB
+      min_chunk_size = 50 * 1024 * 1024 # 50MB
       max_chunk_size = 105 * 1024 * 1024 # 105MB
       chunk_size = [total_size / max_chunks, min_chunk_size].max
       [chunk_size, max_chunk_size].min

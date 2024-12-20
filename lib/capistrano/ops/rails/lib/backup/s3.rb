@@ -66,12 +66,12 @@ module Backup
       total_wait_time = 0
 
       begin
+        multipart_upload ||= s3_client.create_multipart_upload(bucket: bucket, key: key)
         File.open(file_path, 'rb') do |file|
           while (part = file.read(chunk_size)) # Read calculated chunk size
             retry_count = 0
             begin
               # Initiate multipart upload
-              multipart_upload ||= s3_client.create_multipart_upload(bucket: bucket, key: key)
               part_upload = s3_client.upload_part(
                 bucket: bucket,
                 key: key,
@@ -156,11 +156,11 @@ module Backup
       total_wait_time = 0
 
       begin
+        multipart_upload ||= s3_client.create_multipart_upload(bucket: bucket, key: key)
         while (part = read_io.read(chunk_size)) # Read calculated chunk size
           retry_count = 0
           begin
             # Initiate multipart upload
-            multipart_upload ||= s3_client.create_multipart_upload(bucket: bucket, key: key)
             part_upload = s3_client.upload_part(
               bucket: bucket,
               key: key,
@@ -224,8 +224,6 @@ module Backup
       raise e
     end
     # rubocop:enable Metrics/MethodLength
-
-    private
 
     def start_writer_thread(folder_path, write_io)
       Thread.new do
