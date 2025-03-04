@@ -56,8 +56,6 @@ module Backup
 
       uploaded_size = 0
 
-      # Initiate multipart upload
-
       # Upload the tar.gz data from the file in parts
       part_number = 1
       parts = []
@@ -156,11 +154,11 @@ module Backup
       total_wait_time = 0
 
       begin
+        # Initiate multipart upload
         multipart_upload ||= s3_client.create_multipart_upload(bucket: bucket, key: key)
         while (part = read_io.read(chunk_size)) # Read calculated chunk size
           retry_count = 0
           begin
-            # Initiate multipart upload
             part_upload = s3_client.upload_part(
               bucket: bucket,
               key: key,
