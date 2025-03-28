@@ -10,6 +10,14 @@ module Capistrano
           shared_path.join fetch(:rails_log_file_name) || "log/#{fetch(:rails_env)}.log"
         end
 
+        def nginx_log_file_path
+          shared_path.join fetch(:nginx_log_file_name) || 'log/nginx-access.log'
+        end
+
+        def nginx_error_log_file_path
+          shared_path.join fetch(:nginx_error_log_file_name) || 'log/nginx-error.log'
+        end
+
         def sidekiq_log_file_path
           shared_path.join fetch(:sidekiq_log_file_name) || 'log/sidekiq.log'
         end
