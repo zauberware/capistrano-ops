@@ -1,28 +1,88 @@
-require:
-  - rubocop-performance
-  - rubocop-rails
+# RuboCop configuration for ms-graph-mailer gem
+
 AllCops:
-  NewCops: disable
-  TargetRubyVersion: 2.7
-Layout/LineLength:
-  Max: 160
-Metrics/MethodLength:
-  Max: 50
-Metrics/ClassLength:
-  Max: 750
+  NewCops: enable
+  TargetRubyVersion: 3.1
+  SuggestExtensions: false
+  Exclude:
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+    - 'bin/**/*'
+
+# Metrics
+
 Metrics/BlockLength:
   Max: 50
-Metrics/ParameterLists:
-  Max: 6
+  Exclude:
+    - 'spec/**/*'
+    - '*.gemspec'
+
+Metrics/ClassLength:
+  Max: 150
+
+Metrics/MethodLength:
+  Max: 40
+  Exclude:
+    - 'spec/**/*'
+
 Metrics/AbcSize:
-  Max: 60
+  Max: 65
+  Exclude:
+    - 'spec/**/*'
+
 Metrics/CyclomaticComplexity:
-  Max: 25
+  Max: 10
+
 Metrics/PerceivedComplexity:
-  Max: 25
+  Max: 10
+
+# Style
+
 Style/Documentation:
   Enabled: false
-Rails/RakeEnvironment:
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: single_quotes
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  EnforcedStyle: always
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: no_comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: no_comma
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: no_comma
+
+# Layout
+
+Layout/LineLength:
+  Max: 150
+  AllowedPatterns:
+    - '\s+# '
+
+Layout/EmptyLinesAroundAttributeAccessor:
+  Enabled: true
+
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: true
+
+# Lint
+
+Gemspec/DevelopmentDependencies:
   Enabled: false
-Rails/Output:
+
+Gemspec/RequireMFA:
   Enabled: false
+
+Lint/RaiseException:
+  Enabled: true
+
+Lint/StructNewOverride:
+  Enabled: true
