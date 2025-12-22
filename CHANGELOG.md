@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.11] - 2025-12-22
+
+### Added
+
+- Add GitHub Actions workflow for automated gem releases to RubyGems.org
+- Add comprehensive CHANGELOG.md with complete version history
+- Add version bump script (bump_version.rb) for automated version management
+- Add RuboCop configuration for code style enforcement
+
+### Changed
+
+- Update aws-sdk-s3 dependency to ~> 1.208
+- Update Ruby version requirements to >= 3.1.4, < 3.4.0
+
 ## [v1.0.10] - 2025-03-04
 
 ### Changed
@@ -262,7 +276,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Figaro YAML management
 - Basic Capistrano integration
 
-[Unreleased]: https://github.com/zauberware/capistrano-ops/compare/v1.0.10...HEAD
+[Unreleased]: https://github.com/zauberware/capistrano-ops/compare/v1.0.11...HEAD
+[1.0.11]: https://github.com/zauberware/capistrano-ops/releases/tag/v1.0.11
 [v1.0.10]: https://github.com/zauberware/capistrano-ops/compare/v1.0.9...v1.0.10
 [v1.0.9]: https://github.com/zauberware/capistrano-ops/compare/v1.0.8...v1.0.9
 [v1.0.8]: https://github.com/zauberware/capistrano-ops/compare/v1.0.7...v1.0.8
