@@ -1,13 +1,16 @@
-# RuboCop configuration for ms-graph-mailer gem
+inherit_from: .rubocop_todo.yml
+
+# RuboCop configuration for capistrano-ops gem
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 3.1
+  TargetRubyVersion: 3.2
   SuggestExtensions: false
   Exclude:
     - 'vendor/**/*'
     - 'tmp/**/*'
     - 'bin/**/*'
+    - 'lib/capistrano/ops/local/**/*'
 
 # Metrics
 
@@ -76,9 +79,6 @@ Layout/SpaceAroundMethodCallOperator:
 # Lint
 
 Gemspec/DevelopmentDependencies:
-  Enabled: false
-
-Gemspec/RequireMFA:
   Enabled: false
 
 Lint/RaiseException:
