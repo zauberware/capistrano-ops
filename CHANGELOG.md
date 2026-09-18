@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-18
+
 ### Added
 
 - Add `local:run` and `local:console` tasks (module `capistrano/ops/local`) to upload a local Ruby script from `scripts/local/` to the server and execute it — once via `rails runner`, or interactively with a Rails console
@@ -319,7 +321,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Figaro YAML management
 - Basic Capistrano integration
 
-[Unreleased]: https://github.com/zauberware/capistrano-ops/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/zauberware/capistrano-ops/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/zauberware/capistrano-ops/releases/tag/v1.2.0
 [1.1.0]: https://github.com/zauberware/capistrano-ops/releases/tag/v1.1.0
 [1.0.11]: https://github.com/zauberware/capistrano-ops/releases/tag/v1.0.11
 [v1.0.10]: https://github.com/zauberware/capistrano-ops/compare/v1.0.9...v1.0.10
