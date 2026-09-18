@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Widen `required_ruby_version` to `>= 3.2` (previously `>= 3.1.4, < 3.4.0` — blocked Ruby 3.4/3.5)
-- Add version bounds for `rails` (`>= 6.1, < 9`), `faraday` (`>= 2.0, < 3.0`) and `nokogiri` (`>= 1.15`)
+- Add version bounds for `rails` (`>= 7.2, < 9`), `faraday` (`>= 2.0, < 3.0`) and `nokogiri` (`>= 1.15`)
 - Bump `.ruby-version` to `3.4.10`; release workflow now reads it via `ruby-version-file`
 - Bump `.rubocop.yml` `TargetRubyVersion` to `3.2` and enable `Gemspec/RequireMFA`
 - Bump dev-dependencies: `bundler >= 2.5, < 5`, `rubocop ~> 1.80`, `rubocop-rake ~> 0.7`, `rubocop-rspec ~> 3.0`
