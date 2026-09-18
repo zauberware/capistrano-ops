@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './postgres_helper'
+require_relative 'postgres_helper'
 namespace :pg do
   include PostgresHelper
 
@@ -25,11 +25,11 @@ namespace :pg do
     result = system(commandlist)
 
     if ENV['BACKUP_PROVIDER'].present? && external_backup && result
-      puts "Uploading #{filename} to #{ENV['BACKUP_PROVIDER']}..."
+      puts "Uploading #{filename} to #{ENV.fetch('BACKUP_PROVIDER', nil)}..."
       provider = Backup::Api.new
       begin
         provider.upload("#{backup_path}/#{filename}", filename.to_s, 'file')
-        puts "#{filename} uploaded to #{ENV['BACKUP_PROVIDER']}"
+        puts "#{filename} uploaded to #{ENV.fetch('BACKUP_PROVIDER', nil)}"
       rescue StandardError => e
         puts "#{filename} upload failed: #{e.message}"
       end

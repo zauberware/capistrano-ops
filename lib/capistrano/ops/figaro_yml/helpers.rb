@@ -2,7 +2,7 @@
 
 require 'yaml'
 
-# rubocop:disable Metrics/ModuleLength
+# rubocop:disable-next Metrics/ModuleLength
 module Capistrano
   module Ops
     module FigaroYml
@@ -63,7 +63,7 @@ module Capistrano
         end
 
         def local_yaml
-          YAML.safe_load(File.read(figaro_yml_local_path)) || {}
+          YAML.safe_load_file(figaro_yml_local_path) || {}
         end
 
         def figaro_yml_env
@@ -162,9 +162,7 @@ module Capistrano
 
         # file helpers
         def write_to_file(file, content)
-          File.open(file, 'w') do |f|
-            f.write(content)
-          end
+          File.write(file, content)
         end
 
         def write_combined_yaml(yamls_combined)
@@ -180,4 +178,3 @@ module Capistrano
     end
   end
 end
-# rubocop:enable Metrics/ModuleLength

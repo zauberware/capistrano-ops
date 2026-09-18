@@ -27,7 +27,7 @@ module PostgresHelper
     messages = []
     if result
       messages << "Backup of #{database} successfully finished at #{Time.now}"
-      messages << "Backup path:\`#{backup_path}/#{filename}\`"
+      messages << "Backup path:`#{backup_path}/#{filename}`"
     else
       messages << "Backup of #{database} failed at #{Time.now}"
     end
@@ -54,14 +54,14 @@ module PostgresHelper
     commandlist = []
     commandlist << "export PGPASSWORD='#{password}'"
     commandlist << "cd #{backup_path}"
-    commandlist << "pg_dump --no-acl --no-owner #{options.join('')} > #{filename}"
+    commandlist << "pg_dump --no-acl --no-owner #{options.join} > #{filename}"
     commandlist.join(' && ')
   end
 
   def size_str(size)
     units = %w[B KB MB GB TB]
     e = (Math.log(size) / Math.log(1024)).floor
-    s = format('%.2f', size.to_f / 1024**e)
+    s = format('%.2f', size.to_f / (1024**e))
     s.sub(/\.?0*$/, units[e])
   end
 end

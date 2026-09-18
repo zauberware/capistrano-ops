@@ -3,6 +3,7 @@
 namespace :backup do
   namespace :database do
     include Capistrano::Ops::Backup::Helper
+
     # Default to :app role
     rake_roles = fetch(:rake_roles, :app)
 

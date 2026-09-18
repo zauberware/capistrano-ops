@@ -12,7 +12,7 @@ namespace :pg do
   external_backup = Rails.env.production? || ENV['EXTERNAL_BACKUP_ENABLED'] == 'true'
 
   task :remove_old_dumps do
-    bash_regex = "'#{@database}.{0,}\.dump'"
+    bash_regex = "'#{@database}.{0,}.dump'"
 
     unless backups_enabled
       puts 'remove_old_dumps: Backups are disabled'

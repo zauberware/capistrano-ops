@@ -7,15 +7,15 @@ module Notification
     require 'json'
 
     def initialize
-      @webhook_url = ENV['WEBHOOK_URL']
-      @secret = ENV['WEBHOOK_SECRET']
+      @webhook_url = ENV.fetch('WEBHOOK_URL', nil)
+      @secret = ENV.fetch('WEBHOOK_SECRET', nil)
       @conn = Faraday.new(url: @webhook_url) do |faraday|
         faraday.headers['Content-Type'] = 'application/json'
       end
     end
 
     def generate_signature(payload_body)
-      "md5=#{OpenSSL::HMAC.hexdigest('md5', ENV['WEBHOOK_SECRET'], payload_body)}"
+      "md5=#{OpenSSL::HMAC.hexdigest('md5', ENV.fetch('WEBHOOK_SECRET', nil), payload_body)}"
     end
 
     def backup_notification(result, webhook_data, _notification_level)

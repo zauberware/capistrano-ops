@@ -6,8 +6,8 @@ require 'json'
 module Notification
   class Slack
     def initialize
-      @slack_secret = ENV['SLACK_SECRET']
-      @slack_channel = ENV['SLACK_CHANNEL']
+      @slack_secret = ENV.fetch('SLACK_SECRET', nil)
+      @slack_channel = ENV.fetch('SLACK_CHANNEL', nil)
       @conn = Faraday.new(url: 'https://slack.com/api/') do |faraday|
         faraday.headers['Content-Type'] = 'application/json'
         faraday.headers['Authorization'] = "Bearer #{@slack_secret}"
@@ -20,8 +20,8 @@ module Notification
       begin
         res = @conn.post('chat.postMessage') do |req|
           req.body = {
-            "channel": @slack_channel,
-            "text": message
+            channel: @slack_channel,
+            text: message
           }.to_json
         end
         response = JSON.parse(res.body)

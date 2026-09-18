@@ -12,8 +12,9 @@ module Backup
 
     attr_accessor :endpoint, :region, :access_key_id, :secret_access_key, :s3_resource, :s3_client
 
-    def initialize(endpoint: ENV['S3_BACKUP_ENDPOINT'], region: ENV['S3_BACKUP_REGION'], access_key_id: ENV['S3_BACKUP_KEY'],
-                   secret_access_key: ENV['S3_BACKUP_SECRET'])
+    def initialize(endpoint: ENV.fetch('S3_BACKUP_ENDPOINT',
+                                       nil), region: ENV.fetch('S3_BACKUP_REGION', nil), access_key_id: ENV.fetch('S3_BACKUP_KEY', nil),
+                   secret_access_key: ENV.fetch('S3_BACKUP_SECRET', nil))
       self.endpoint = endpoint
       self.region = region
       self.access_key_id = access_key_id
@@ -31,7 +32,7 @@ module Backup
 
     def upload(backup_file, key)
       begin
-        s3_resource.bucket(ENV['S3_BACKUP_BUCKET']).object(key).upload_file(backup_file)
+        s3_resource.bucket(ENV.fetch('S3_BACKUP_BUCKET', nil)).object(key).upload_file(backup_file)
       rescue Backup::Error => e
         puts "Upload failed: #{e.message}"
         raise e
@@ -49,7 +50,7 @@ module Backup
 
     # rubocop:disable Metrics/MethodLength
     def upload_file_as_stream(file_path, key)
-      bucket = ENV['S3_BACKUP_BUCKET']
+      bucket = ENV.fetch('S3_BACKUP_BUCKET', nil)
       # Calculate total size of the file to be uploaded
       total_size = File.size(file_path)
       chunk_size = calculate_chunk_size(total_size)
@@ -130,7 +131,7 @@ module Backup
     end
 
     def upload_folder_as_tar_gz_stream(folder_path, key)
-      bucket = ENV['S3_BACKUP_BUCKET']
+      bucket = ENV.fetch('S3_BACKUP_BUCKET', nil)
 
       # Calculate total size of the files to be uploaded
       total_size = calculate_total_size(folder_path)
@@ -256,7 +257,7 @@ module Backup
     end
 
     def remove_old_backups(basename, keep: 5)
-      all_items = s3_resource.bucket(ENV['S3_BACKUP_BUCKET']).objects(prefix: basename).map do |item|
+      all_items = s3_resource.bucket(ENV.fetch('S3_BACKUP_BUCKET', nil)).objects(prefix: basename).map do |item|
         { key: item.key, last_modified: item.last_modified }
       end
 
@@ -272,7 +273,7 @@ module Backup
           puts "Removing #{month} from S3"
           delete_items.each do |item_obj|
             puts "Removing #{item_obj[:key]} from S3"
-            s3_resource.bucket(ENV['S3_BACKUP_BUCKET']).object(item_obj[:key]).delete
+            s3_resource.bucket(ENV.fetch('S3_BACKUP_BUCKET', nil)).object(item_obj[:key]).delete
           end
         end
         puts 'Old months removed from S3'
@@ -286,7 +287,7 @@ module Backup
 
       current_month_delete_items.each do |item_obj|
         puts "Removing #{item_obj[:key]} from S3"
-        s3_resource.bucket(ENV['S3_BACKUP_BUCKET']).object(item_obj[:key]).delete
+        s3_resource.bucket(ENV.fetch('S3_BACKUP_BUCKET', nil)).object(item_obj[:key]).delete
       end
       puts 'Old backups removed from S3'
     rescue Backup::Error => e

@@ -5,7 +5,7 @@ module Capistrano
     module Backup
       module Helper
         def backup_file_name(type)
-          regex = type == 'storage' ? "'.{0,}\.tar.gz'" : "'.{0,}\.dump'"
+          regex = type == 'storage' ? "'.{0,}.tar.gz'" : "'.{0,}.dump'"
           @backup_file_name ||= capture "cd #{shared_path}/backups && ls -lt | grep -E -i #{regex} | head -n 1 | awk '{print $9}'"
         end
 
@@ -26,7 +26,7 @@ module Capistrano
           puts 'Temporary backup deleted'
         end
 
-        def question(question, default = 'n', &block)
+        def question(question, default = 'n', &)
           print "#{question} #{default.downcase == 'n' ? '(y/N)' : '(Y/n)'}: "
           input = $stdin.gets.strip.downcase
           answer = (input.empty? ? default : input).downcase.to_s
@@ -34,7 +34,7 @@ module Capistrano
           if %w[y n].include?(answer)
             yield(answer == 'y')
           else
-            question(question, default, &block)
+            question(question, default, &)
           end
         end
 
@@ -47,7 +47,7 @@ module Capistrano
         def size_str(size)
           units = %w[B KB MB GB TB]
           e = (Math.log(size) / Math.log(1024)).floor
-          s = format('%.2f', size.to_f / 1024**e)
+          s = format('%.2f', size.to_f / (1024**e))
           s.sub(/\.?0*$/, units[e])
         end
       end

@@ -3,6 +3,7 @@
 namespace :figaro_yml do
   include Capistrano::Ops::FigaroYml::Paths
   include Capistrano::Ops::FigaroYml::Helpers
+
   rake_roles = fetch(:rake_roles, :app)
 
   task :get_stage do

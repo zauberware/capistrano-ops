@@ -4,6 +4,7 @@ require_relative 'backup/backup_helper'
 
 namespace :backup do
   include BackupHelper
+
   # Default to :app role
   rake_roles = fetch(:rake_roles, :app)
 

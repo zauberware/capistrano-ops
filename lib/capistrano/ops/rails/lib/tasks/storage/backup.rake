@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './storage_helper'
+require_relative 'storage_helper'
 namespace :storage do
   include StorageHelper
 

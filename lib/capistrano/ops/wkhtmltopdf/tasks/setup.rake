@@ -2,6 +2,7 @@
 
 namespace :wkhtmltopdf do
   include Capistrano::Ops::Wkhtmltopdf::Helpers
+
   after 'deploy:symlink:release', 'wkhtmltopdf:setup'
 
   desc 'unzip wkhtmltopdf if necessary'

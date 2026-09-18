@@ -3,10 +3,9 @@
 namespace :figaro_yml do
   include Capistrano::Ops::FigaroYml::Paths
   include Capistrano::Ops::FigaroYml::Helpers
+
   task :get do
-    if !File.exist?(figaro_yml_local_path)
-      invoke 'figaro_yml:create_local'
-    else
+    if File.exist?(figaro_yml_local_path)
       local_yml = local_figaro_yml(figaro_yml_env)
       local_global, local_stage, local_rest = configs(local_yml, figaro_yml_env)
       on release_roles :all do
@@ -40,6 +39,8 @@ namespace :figaro_yml do
         # write to new file
         write_combined_yaml(composed_yml.sort.to_h)
       end
+    else
+      invoke 'figaro_yml:create_local'
     end
   end
 end
