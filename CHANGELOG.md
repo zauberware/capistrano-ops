@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `local:run` and `local:console` tasks (module `capistrano/ops/local`) to upload a local Ruby script from `scripts/local/` to the server and execute it — once via `rails runner`, or interactively with a Rails console
+- Helpers module `Capistrano::Ops::Local::Helpers` with script resolution (auto `.rb`), listing, TTY-aware coloring, and dangerous-stage confirmation
+- Configurable settings: `:local_scripts_dir`, `:local_dangerous_stages`; existing `:console_role`, `:console_env`, `:console_user`, `:console_shell` respected
+- Specs for helpers (script resolution, TTY coloring, tmp-path generation)
+- README section documenting the new tasks, including `capistrano-rails` prerequisite for `local:console`
+
 ## [1.1.0] - 2026-09-18
 
 ### Added

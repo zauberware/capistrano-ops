@@ -10,7 +10,6 @@ AllCops:
     - 'vendor/**/*'
     - 'tmp/**/*'
     - 'bin/**/*'
-    - 'lib/capistrano/ops/local/**/*'
 
 # Metrics
 
