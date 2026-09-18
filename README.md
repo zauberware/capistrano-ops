@@ -24,6 +24,7 @@ The capistrano-ops gem is a valuable library, tailor-made for Rails DevOps profe
   - [Configuration](#configuration-1)
   - [Usage](#usage-1)
 - [Wkhtmltopdf Setup](#wkhtmltopdf-setup)
+- [Local scripts (run / console)](#local-scripts-run--console)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -170,6 +171,8 @@ require 'capistrano/ops'
 | `cap <environment> logrotate:enable`             | enable logrotate for logfiles on server                                  |
 | `cap <environment> logrotate:disable`            | disable logrotate for logfiles on server                                 |
 | `cap <environment> logrotate:check`              | show logrotate status for logfiles on server                             |
+| `cap <environment> local:run SCRIPT=<file>`      | upload local script and execute it once via `rails runner` on the server |
+| `cap <environment> local:console SCRIPT=<file>`  | open a remote Rails console with a local script preloaded                |
 | `rake pg:dump`                                   | creates postgres database backup                                         |
 | `rake pg:remove_old_dumps`                       | remove old postgres backups                                              |
 | `rake storage:backup`                            | creates backup of storage                                                |
@@ -387,6 +390,90 @@ To use this script, include it in your Capistrano tasks and it will automaticall
 # Capfile
 require 'capistrano/ops/wkhtmltopdf'
 ```
+
+[↑](#)
+
+## Local scripts (run / console)
+
+Ship a Ruby script from your workstation onto the server and execute it there —
+either once via `rails runner`, or with a Rails console attached and the
+script's methods preloaded. Useful for one-off data patches, ad-hoc audits, or
+debugging sessions where you want your local scratch code to have full access
+to the production Rails environment.
+
+### Requirements
+
+`local:console` uses the interactive console runner shipped in `capistrano-rails`.
+Make sure both are loaded in your `Capfile`:
+
+```ruby
+# Capfile
+require 'capistrano/rails/console'   # provides run_interactively (needed by local:console)
+require 'capistrano/ops'             # auto-loads capistrano/ops/local
+```
+
+If `capistrano-rails` is not in your Gemfile, the `local:*` tasks will emit a
+warning at load time and skip registering. `local:run` alone technically only
+needs core Capistrano, but for simplicity both tasks share the same gate.
+
+### Setup
+
+Create the scripts directory in your app root (default `scripts/local/`) and
+drop `.rb` files in it:
+
+```
+scripts/local/
+├── check_stuck_jobs.rb
+└── set_welcome_email_template.rb
+```
+
+The directory is configurable:
+
+```ruby
+# config/deploy.rb
+set :local_scripts_dir, 'ops/scripts'   # default: 'scripts/local'
+```
+
+### Tasks
+
+```bash
+cap staging local:run     SCRIPT=check_stuck_jobs      # execute once via rails runner
+cap staging local:console SCRIPT=check_stuck_jobs      # open remote console with script preloaded
+```
+
+- `.rb` extension is optional (`SCRIPT=foo` and `SCRIPT=foo.rb` both work)
+- Omitting `SCRIPT=` prints the list of available scripts
+- Interactive `[y/N]` confirmation on "dangerous" stages (default: `production`)
+- Uploaded temp files are cleaned up automatically after execution
+
+### Writing scripts
+
+Define methods rather than top-level code — this way the same script works for
+both `local:run` (direct execution) and `local:console` (interactive access):
+
+```ruby
+# scripts/local/check_stuck_jobs.rb
+def show_stuck_jobs(hours_ago: 24)
+  cutoff = hours_ago.hours.ago
+  Sidekiq::Workers.new.select { |_, _, w| Time.at(w['run_at']) < cutoff }.each do |process, _, work|
+    puts "#{work['payload']['class']} on #{process}"
+  end
+end
+
+# auto-run when executed via local:run, dormant in the console
+show_stuck_jobs unless defined?(IRB)
+```
+
+### Configuration options
+
+| Setting                    | Default                         | Purpose                                        |
+| -------------------------- | ------------------------------- | ---------------------------------------------- |
+| `:local_scripts_dir`       | `'scripts/local'`               | Where local scripts are read from              |
+| `:local_dangerous_stages`  | `%w[production]`                | Stages that trigger the `[y/N]` confirmation   |
+| `:console_role`            | `:app`                          | Capistrano role used to pick the target host   |
+| `:console_env`             | `fetch(:rails_env) \|\| :stage` | Rails env passed to `rails runner` / `console` |
+| `:console_user`            | (unset)                         | `sudo -u` target user for the remote command   |
+| `:console_shell`           | (unset)                         | Shell override for the interactive session     |
 
 [↑](#)
 
