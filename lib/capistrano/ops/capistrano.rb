@@ -7,6 +7,7 @@ require 'capistrano/ops/logrotate'
 require 'capistrano/ops/logs'
 require 'capistrano/ops/invoke'
 require 'capistrano/ops/backup'
+require 'capistrano/ops/local'
 
 unless defined?(Capistrano::VERSION) && Gem::Version.new(Capistrano::VERSION).release >= Gem::Version.new('3.0.0')
   puts 'Capistrano 3 is required to use this gem'
