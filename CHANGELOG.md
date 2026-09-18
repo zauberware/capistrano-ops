@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-18
+
+### Added
+
+- Add CI workflow (`.github/workflows/ci.yml`) with a Ruby matrix (3.2, 3.3, 3.4) running RSpec, plus separate RuboCop and bundler-audit jobs
+- Add Dependabot config for weekly `bundler` and `github-actions` updates
+- Add `bundler-audit` dev-dependency and Rake task
+- Add minimal spec harness (`spec/spec_helper.rb`, `.rspec`, version smoke spec)
+- Add `.rubocop_todo.yml` baseline for new cops that would require API-shape changes (metrics, predicate naming, keyword args)
+
+### Changed
+
+- Widen `required_ruby_version` to `>= 3.2` (previously `>= 3.1.4, < 3.4.0` — blocked Ruby 3.4/3.5)
+- Add version bounds for `rails` (`>= 7.2, < 9`), `faraday` (`>= 2.0, < 3.0`) and `nokogiri` (`>= 1.15`)
+- Bump `.ruby-version` to `3.4.10`; release workflow now reads it via `ruby-version-file`
+- Bump `.rubocop.yml` `TargetRubyVersion` to `3.2` and enable `Gemspec/RequireMFA`
+- Bump dev-dependencies: `bundler >= 2.4, < 5`, `rubocop ~> 1.80`, `rubocop-rake ~> 0.7`, `rubocop-rspec ~> 3.0`
+- `rake` default now runs `spec` + `rubocop`
+
+### Removed
+
+- Remove obsolete `.travis.yml` (Travis CI is end-of-life)
+- Remove stray `release.gem` build artifact from repo root
+- Remove dead `lib/capistrano/ops/capistrano/v3/tasks/backup.rake`: never wired into `TaskLoader`, required a non-existent `backup_helper` file, and its deprecated tasks (`backup:create` / `backup:pull`) had been superseded by `backup:database:*`
+
+### Fixed
+
+- Fix `NameError` in `Notification::Webhook#backup_notification` when notification level was `error` on a successful backup (`_notification_level` param was referenced without the underscore)
+- Fix `bin/console`: required non-existent `capistrano/rake`; now requires `capistrano/ops`
+- Correct copy-paste header in `.rubocop.yml` (was labeled for `ms-graph-mailer`)
+
+### Docs
+
+- Clarify optional runtime dependencies (`whenever`, `figaro`, `wicked_pdf`) in README; state Ruby and Rails floors explicitly
+
 ## [1.0.11] - 2025-12-22
 
 ### Added
@@ -276,7 +311,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Figaro YAML management
 - Basic Capistrano integration
 
-[Unreleased]: https://github.com/zauberware/capistrano-ops/compare/v1.0.11...HEAD
+[Unreleased]: https://github.com/zauberware/capistrano-ops/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/zauberware/capistrano-ops/releases/tag/v1.1.0
 [1.0.11]: https://github.com/zauberware/capistrano-ops/releases/tag/v1.0.11
 [v1.0.10]: https://github.com/zauberware/capistrano-ops/compare/v1.0.9...v1.0.10
 [v1.0.9]: https://github.com/zauberware/capistrano-ops/compare/v1.0.8...v1.0.9

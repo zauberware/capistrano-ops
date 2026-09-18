@@ -18,15 +18,17 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ['lib']
 
-  s.required_ruby_version = '>= 3.1.4', '< 3.4.0'
+  s.required_ruby_version = '>= 3.2'
   s.add_dependency 'aws-sdk-s3', '~> 1.208'
-  s.add_dependency 'faraday'
-  s.add_dependency 'nokogiri'
-  s.add_dependency 'rails'
-  s.add_development_dependency 'bundler', '~> 2.0'
+  s.add_dependency 'faraday', '>= 2.0', '< 3.0'
+  s.add_dependency 'nokogiri', '>= 1.15'
+  s.add_dependency 'rails', '>= 7.2', '< 9'
+  s.add_development_dependency 'bundler', '>= 2.4', '< 5'
+  s.add_development_dependency 'bundler-audit', '~> 0.9'
   s.add_development_dependency 'rake', '~> 13.0'
   s.add_development_dependency 'rspec', '~> 3.0'
-  s.add_development_dependency 'rubocop', '~> 1.0'
-  s.add_development_dependency 'rubocop-rake', '~> 0.6'
-  s.add_development_dependency 'rubocop-rspec', '~> 2.0'
+  s.add_development_dependency 'rubocop', '~> 1.80'
+  s.add_development_dependency 'rubocop-rake', '~> 0.7'
+  s.add_development_dependency 'rubocop-rspec', '~> 3.0'
+  s.metadata['rubygems_mfa_required'] = 'true'
 end

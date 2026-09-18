@@ -3,6 +3,7 @@
 namespace :backup do
   namespace :storage do
     include Capistrano::Ops::Backup::Helper
+
     # Default to :app role
     rake_roles = fetch(:rake_roles, :app)
     desc 'pull latest storage dump from server to local'

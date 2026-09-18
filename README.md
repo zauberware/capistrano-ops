@@ -78,13 +78,22 @@ The capistrano-ops gem is a valuable library, tailor-made for Rails DevOps profe
 
 ## Requirements
 
-```ruby
-'capistrano', '~> 3.0'
-'whenever' # for scheduling tasks
-'figaro' # for environment variables if you use figaro_yml tasks
+Runtime requirements pulled in by the gem itself:
 
-# hint: if you use other aws-sdk gems, its possible that you have to update them too
+- Ruby `>= 3.2`
+- Rails `>= 7.2, < 9`
+- `capistrano ~> 3.0` (in your app)
+
+Optional runtime dependencies — the corresponding task groups are only
+loaded when the gem is present in your `Gemfile`:
+
+```ruby
+gem 'whenever'    # enables whenever:show_crontab
+gem 'figaro'      # enables figaro_yml:* tasks
+gem 'wicked_pdf'  # enables wkhtmltopdf:setup (with wkhtmltopdf-binary)
 ```
+
+> hint: if you use other aws-sdk gems, it's possible that you have to update them too
 
 [↑](#)
 

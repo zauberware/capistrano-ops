@@ -3,6 +3,7 @@
 namespace :figaro_yml do
   include Capistrano::Ops::FigaroYml::Paths
   include Capistrano::Ops::FigaroYml::Helpers
+
   task :sort_local do
     run_locally do
       info 'Sorting local application.yml...'

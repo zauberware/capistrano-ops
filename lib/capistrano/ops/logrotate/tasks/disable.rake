@@ -3,6 +3,7 @@
 namespace :logrotate do
   include Capistrano::Ops::Logrotate::Paths
   include Capistrano::Ops::Logrotate::Helpers
+
   desc 'disable logrotate'
   task :disable do
     on roles(:app) do

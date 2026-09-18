@@ -4,7 +4,7 @@ module Backup
   class Api
     attr_accessor :backup_provider, :provider_config
 
-    def initialize(provider: ENV['BACKUP_PROVIDER'], provider_config: {})
+    def initialize(provider: ENV.fetch('BACKUP_PROVIDER', nil), provider_config: {})
       self.backup_provider = provider
       self.provider_config = provider_config
     end

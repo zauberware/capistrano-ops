@@ -14,7 +14,7 @@ namespace :storage do
   @total_external_backups_no = (@env_external_no || ENV['NUMBER_OF_BACKUPS'] || 7).to_i
   desc 'remove old storage backups'
   task :remove_old_backups do
-    bash_regex = "'storage_.{0,}\.tar.gz'"
+    bash_regex = "'storage_.{0,}.tar.gz'"
 
     unless backups_enabled
       puts 'remove_old_backups: Backups are disabled'
@@ -37,7 +37,7 @@ namespace :storage do
       'xargs rm -rf'
     ]
 
-    result = system(commandlist.join(' | ')) if @total_local_backups_no.positive? && local_backup || !local_backup && external_backup
+    result = system(commandlist.join(' | ')) if (@total_local_backups_no.positive? && local_backup) || (!local_backup && external_backup)
     puts 'remove_old_backups: local cleanup finished' if result
 
     if ENV['BACKUP_PROVIDER'].present? && external_backup

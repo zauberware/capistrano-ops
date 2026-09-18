@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'capistrano/ops/rails/lib/backup/api'
 require 'capistrano/ops/rails/lib/backup/s3'
 

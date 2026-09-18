@@ -4,7 +4,7 @@ module Notification
   class Api
     attr_accessor :notification_type, :notification_level
 
-    def initialize(notification_type: ENV['NOTIFICATION_TYPE'], notification_level: ENV['NOTIFICATION_LEVEL'])
+    def initialize(notification_type: ENV.fetch('NOTIFICATION_TYPE', nil), notification_level: ENV.fetch('NOTIFICATION_LEVEL', nil))
       self.notification_type = notification_type
       self.notification_level = notification_level || 'error'
     end

@@ -6,7 +6,7 @@ namespace :invoke do
 
   desc 'Execute a rake task on a remote server (cap invoke:rake TASK=db:migrate)'
   task :rake do
-    task_name = ENV['TASK']
+    task_name = ENV.fetch('TASK', nil)
     unless task_name
       puts "\n\nFailed! You need to specify the 'TASK' parameter!",
            'Usage: cap <stage> invoke:rake TASK=your:task',
