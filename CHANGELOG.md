@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add CI workflow (`.github/workflows/ci.yml`) with a Ruby matrix (3.2, 3.3, 3.4) running RSpec, plus separate RuboCop and bundler-audit jobs
+- Add Dependabot config for weekly `bundler` and `github-actions` updates
+- Add `bundler-audit` dev-dependency and Rake task
+- Add minimal spec harness (`spec/spec_helper.rb`, `.rspec`, version smoke spec)
+- Add `.rubocop_todo.yml` baseline for new cops that would require API-shape changes (metrics, predicate naming, keyword args)
+
+### Changed
+
+- Widen `required_ruby_version` to `>= 3.2` (previously `>= 3.1.4, < 3.4.0` — blocked Ruby 3.4/3.5)
+- Add version bounds for `rails` (`>= 6.1, < 9`), `faraday` (`>= 2.0, < 3.0`) and `nokogiri` (`>= 1.15`)
+- Bump `.ruby-version` to `3.4.10`; release workflow now reads it via `ruby-version-file`
+- Bump `.rubocop.yml` `TargetRubyVersion` to `3.2` and enable `Gemspec/RequireMFA`
+- Bump dev-dependencies: `bundler >= 2.5, < 5`, `rubocop ~> 1.80`, `rubocop-rake ~> 0.7`, `rubocop-rspec ~> 3.0`
+- `rake` default now runs `spec` + `rubocop`
+
+### Removed
+
+- Remove obsolete `.travis.yml` (Travis CI is end-of-life)
+- Remove stray `release.gem` build artifact from repo root
+
+### Fixed
+
+- Correct copy-paste header in `.rubocop.yml` (was labeled for `ms-graph-mailer`)
+
 ## [1.0.11] - 2025-12-22
 
 ### Added
