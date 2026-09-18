@@ -28,10 +28,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove obsolete `.travis.yml` (Travis CI is end-of-life)
 - Remove stray `release.gem` build artifact from repo root
+- Remove dead `lib/capistrano/ops/capistrano/v3/tasks/backup.rake`: never wired into `TaskLoader`, required a non-existent `backup_helper` file, and its deprecated tasks (`backup:create` / `backup:pull`) had been superseded by `backup:database:*`
 
 ### Fixed
 
+- Fix `NameError` in `Notification::Webhook#backup_notification` when notification level was `error` on a successful backup (`_notification_level` param was referenced without the underscore)
+- Fix `bin/console`: required non-existent `capistrano/rake`; now requires `capistrano/ops`
 - Correct copy-paste header in `.rubocop.yml` (was labeled for `ms-graph-mailer`)
+
+### Docs
+
+- Clarify optional runtime dependencies (`whenever`, `figaro`, `wicked_pdf`) in README; state Ruby and Rails floors explicitly
 
 ## [1.0.11] - 2025-12-22
 
