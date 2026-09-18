@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'faraday', '>= 2.0', '< 3.0'
   s.add_dependency 'nokogiri', '>= 1.15'
   s.add_dependency 'rails', '>= 7.2', '< 9'
-  s.add_development_dependency 'bundler', '>= 2.5', '< 5'
+  s.add_development_dependency 'bundler', '>= 2.4', '< 5'
   s.add_development_dependency 'bundler-audit', '~> 0.9'
   s.add_development_dependency 'rake', '~> 13.0'
   s.add_development_dependency 'rspec', '~> 3.0'
