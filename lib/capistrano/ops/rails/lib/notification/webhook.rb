@@ -18,7 +18,7 @@ module Notification
       "md5=#{OpenSSL::HMAC.hexdigest('md5', ENV.fetch('WEBHOOK_SECRET', nil), payload_body)}"
     end
 
-    def backup_notification(result, webhook_data, _notification_level)
+    def backup_notification(result, webhook_data, notification_level)
       return if @webhook_url.nil? || @secret.nil?
       return if result && notification_level == 'error'
 
